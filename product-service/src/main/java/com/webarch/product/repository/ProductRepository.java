@@ -8,9 +8,9 @@ import com.webarch.product.domain.Product;
 import com.webarch.product.domain.ProductCategory;
 
 public interface ProductRepository extends JpaRepository<Product, Long>{
-    List<Product> findByActive();
+    List<Product> findByActiveTrue();
 
     List<Product> findByCategory(ProductCategory category);
 
-    List<Product> findByName(String name);
+    List<Product> findByNameContainingIgnoreCase(String name);
 }
