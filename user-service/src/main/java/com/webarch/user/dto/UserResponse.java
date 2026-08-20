@@ -8,6 +8,8 @@ public record UserResponse(
 		Long id,
 		String username,
 		String email,
+		String name,
+		String phone,
 		Role role,
 		boolean enabled,
 		Instant createdAt
