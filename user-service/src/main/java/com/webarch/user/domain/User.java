@@ -31,6 +31,12 @@ public class User {
 	@Column(nullable = false)
 	private String password;
 
+	@Column(nullable = false)
+	private String name;
+
+	@Column
+	private String phone;
+
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private Role role;
