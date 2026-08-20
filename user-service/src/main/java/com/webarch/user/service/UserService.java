@@ -38,6 +38,8 @@ public class UserService implements UserDetailsService {
 				.username(request.username())
 				.email(request.email())
 				.password(passwordEncoder.encode(request.password()))
+				.name(request.name())
+				.phone(request.phone())
 				.role(request.role() != null ? request.role() : Role.USER)
 				.build();
 
@@ -76,6 +78,8 @@ public class UserService implements UserDetailsService {
 				user.getId(),
 				user.getUsername(),
 				user.getEmail(),
+				user.getName(),
+				user.getPhone(),
 				user.getRole(),
 				user.isEnabled(),
 				user.getCreatedAt()
