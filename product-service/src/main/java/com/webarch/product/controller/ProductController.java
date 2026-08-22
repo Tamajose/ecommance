@@ -4,7 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.webarch.product.domain.ProductCategory;
-import com.webarch.product.dto.ProductRequest;
+import com.webarch.product.dto.StockRequest;
 import com.webarch.product.dto.ProductResponse;
 import com.webarch.product.service.ProductService;
 
@@ -21,7 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 
 
@@ -30,6 +31,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
+
+    @Value("${internal.api-key}")
+    private String internalApiKey;
+
+    @PostMapping("/{id}/stock")
+    public ResponseEntity<ProductResponse> adjustStock(@PathVariable Long id,
+            @RequestHeader("X-Internal-Api-Key") String apiKey,
+            @Valid @RequestBody StockRequest request) {
+        if (!internalApiKey.equals(apiKey)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(productService.adjustStock(id, request.delta()));
+    }
 
     @PostMapping
     public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request){

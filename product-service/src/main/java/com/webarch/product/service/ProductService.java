@@ -93,6 +93,21 @@ public class ProductService {
         productRepository.save(product);
     }
 
+    @Transactional
+    public ProductResponse adjustStock(Long id, int delta){
+        Product product = productRepository.findById(id).orElseThrow(
+            () -> new RuntimeException("No Product is found with Product ID: " + id)
+        );
+
+        int newStock = product.getStockQuantity() + delta;
+        if(newStock < 0){
+            throw new IllegalArgumentException("Insufficient stock for product " + id);
+        }
+
+        product.setStockQuantity(newStock);
+        return toResponse(productRepository.save(product));
+    }
+
     @Transactional(readOnly = true)
     public List<ProductResponse> searchProducts(String name){
         return productRepository.findByNameContainingIgnoreCase(name).stream().filter(Product::getActive).map(this::toResponse).toList();

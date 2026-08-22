@@ -94,10 +94,8 @@ public class UserService implements UserDetailsService {
 				user.getRole(),
 				user.isEnabled(),
 				user.getCreatedAt(),
-				user.getAddressLine1(),
-				user.getAddressLine2(),
+				user.getAddressLine(),
 				user.getAddressCity(),
-				user.getAddressState(),
 				user.getAddressPostalCode(),
 				user.getAddressCountry()
 		);
