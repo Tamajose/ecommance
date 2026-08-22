@@ -14,7 +14,7 @@ public record PaymentResponse (
     Long userId,
     Long cartId,
     BigDecimal amount,
-    PaymentMethod paymetMethod,
+    PaymentMethod paymentMethod,
     PaymentStatus paymentStatus,
     LocalDateTime createdAt,
     LocalDateTime updatedAt

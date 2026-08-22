@@ -19,6 +19,6 @@ public record PaymentRequest(
     BigDecimal amount,
 
     @NotNull
-    PaymentMethod paymetMethod
+    PaymentMethod paymentMethod
 ) {
 }
