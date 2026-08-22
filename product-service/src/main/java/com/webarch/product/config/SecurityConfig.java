@@ -1,63 +1,58 @@
 package com.webarch.product.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
-        UserDetails admin = User.builder()
-                                .username("admin")
-                                .password(passwordEncoder.encode("admin"))
-                                .roles("ADMIN")
-                                .build();
-        
-        return new InMemoryUserDetailsManager(admin);
-    }
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http
+				.csrf(AbstractHttpConfigurer::disable)
+				.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers(
+								"/h2-console/**",
+								"/actuator/**",
+								"/swagger-ui/**",
+								"/v3/api-docs/**"
+						).permitAll()
+						.requestMatchers(
+								org.springframework.http.HttpMethod.GET,
+								"/api/products/**"
+						).permitAll()
+						.requestMatchers("/api/products/**").hasAuthority("ADMIN")
+						.anyRequest().authenticated()
+				)
+				.oauth2ResourceServer(oauth2 -> oauth2
+						.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
+				)
+				.headers(headers -> headers.frameOptions(frame -> frame.sameOrigin()));
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers(
-                            "/h2-console/**",
-                            "/actuator/**",
-                            "/swagger-ui/**",
-                            "/v3/api-docs/**"
-                    ).permitAll()
+		return http.build();
+	}
 
-                    .requestMatchers(
-                            org.springframework.http.HttpMethod.GET,
-                            "/api/products/**"
-                    ).permitAll()
+	@Bean
+	public JwtDecoder jwtDecoder(@Value("${jwt.jwk-set-uri}") String jwkSetUri) {
+		return NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
+	}
 
-                    .requestMatchers("/api/products/**")
-                    .hasRole("ADMIN")
-
-                    .anyRequest()
-                    .authenticated()
-            )
-            .httpBasic(httpBasic -> {})
-            .headers(headers -> headers.frameOptions(frame -> frame.disable()));
-
-        return http.build();
-    }
+	private JwtAuthenticationConverter jwtAuthenticationConverter() {
+		JwtGrantedAuthoritiesConverter authoritiesConverter = new JwtGrantedAuthoritiesConverter();
+		authoritiesConverter.setAuthoritiesClaimName("scope");
+		authoritiesConverter.setAuthorityPrefix("");
+		JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+		converter.setJwtGrantedAuthoritiesConverter(authoritiesConverter);
+		return converter;
+	}
 }

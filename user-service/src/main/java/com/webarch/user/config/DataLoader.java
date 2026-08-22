@@ -23,6 +23,8 @@ public class DataLoader implements CommandLineRunner {
 					"admin",
 					"admin@ecommance.com",
 					"admin123",
+					"Admin",
+					"+10000000000",
 					Role.ADMIN
 			));
 		} catch (IllegalArgumentException ignored) {

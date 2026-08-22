@@ -2,6 +2,7 @@ package com.webarch.user.service;
 
 import com.webarch.user.domain.Role;
 import com.webarch.user.domain.User;
+import com.webarch.user.dto.AddressRequest;
 import com.webarch.user.dto.UserRequest;
 import com.webarch.user.dto.UserResponse;
 import com.webarch.user.repository.UserRepository;
@@ -59,7 +60,17 @@ public class UserService implements UserDetailsService {
 				.orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 	}
 
-	@Override
+	@Transactional
+	public UserResponse updateAddress(Long id, AddressRequest request) {
+		User user = userRepository.findById(id)
+				.orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
+		user.setAddressLine(request.line());
+		user.setAddressCity(request.city());
+		user.setAddressPostalCode(request.postalCode());
+		user.setAddressCountry(request.country());
+		return toResponse(userRepository.save(user));
+	}
+
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUsername(username)
@@ -82,7 +93,13 @@ public class UserService implements UserDetailsService {
 				user.getPhone(),
 				user.getRole(),
 				user.isEnabled(),
-				user.getCreatedAt()
+				user.getCreatedAt(),
+				user.getAddressLine1(),
+				user.getAddressLine2(),
+				user.getAddressCity(),
+				user.getAddressState(),
+				user.getAddressPostalCode(),
+				user.getAddressCountry()
 		);
 	}
 }
