@@ -1,6 +1,5 @@
 package com.webarch.payment.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,8 +27,6 @@ public class PaymentService {
                             .amount(request.amount())
                             .paymentMethod(request.paymentMethod())
                             .paymentStatus(PaymentStatus.PENDING)
-                            .createdAt(LocalDateTime.now())
-                            .updatedAt(LocalDateTime.now())
                             .build();
 
         Payment savedPayment = paymentRepository.save(payment);
@@ -72,7 +69,6 @@ public class PaymentService {
                             );
 
         payment.setPaymentStatus(PaymentStatus.COMPLETED);
-        payment.setUpdatedAt(LocalDateTime.now());
 
         Payment updatedPayment = paymentRepository.save(payment);
         return toResponse(updatedPayment);
@@ -86,7 +82,6 @@ public class PaymentService {
                             );
 
         payment.setPaymentStatus(PaymentStatus.FAILED);
-        payment.setUpdatedAt(LocalDateTime.now());
 
         Payment updatedPayment = paymentRepository.save(payment);
         return toResponse(updatedPayment);
@@ -100,7 +95,6 @@ public class PaymentService {
                             );
 
         payment.setPaymentStatus(PaymentStatus.REFUNDED);
-        payment.setUpdatedAt(LocalDateTime.now());
 
         Payment updatedPayment = paymentRepository.save(payment);
         return toResponse(updatedPayment);
@@ -114,5 +108,10 @@ public class PaymentService {
     @Transactional(readOnly = true)
     public List<PaymentResponse> getPaymentsByCart(Long cartId){
         return paymentRepository.findByCartId(cartId).stream().map(this::toResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PaymentResponse> getPaymentByStatus(PaymentStatus paymentStatus){
+        return paymentRepository.findByPaymentStatus(paymentStatus).stream().map(this::toResponse).toList();
     }
 }
