@@ -1,5 +1,6 @@
 package com.webarch.user.controller;
 
+import com.webarch.user.dto.AddressRequest;
 import com.webarch.user.dto.UserRequest;
 import com.webarch.user.dto.UserResponse;
 import com.webarch.user.service.UserService;
@@ -38,5 +39,11 @@ public class UserController {
 	@GetMapping("/{id}")
 	public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
 		return ResponseEntity.ok(userService.getUserById(id));
+	}
+
+	@PutMapping("/{id}/address")
+	public ResponseEntity<UserResponse> updateAddress(@PathVariable Long id,
+			@Valid @RequestBody AddressRequest request) {
+		return ResponseEntity.ok(userService.updateAddress(id, request));
 	}
 }

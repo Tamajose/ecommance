@@ -12,6 +12,10 @@ public record UserResponse(
 		String phone,
 		Role role,
 		boolean enabled,
-		Instant createdAt
+		Instant createdAt,
+		String addressLine,
+		String addressCity,
+		String addressPostalCode,
+		String addressCountry
 ) {
 }
