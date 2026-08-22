@@ -59,7 +59,6 @@ public class UserService implements UserDetailsService {
 				.orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUsername(username)

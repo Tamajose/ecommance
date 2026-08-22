@@ -30,7 +30,7 @@ public class AuthService {
 		);
 
 		String scope = auth.getAuthorities().stream()
-				.map(a -> a.getAuthority())
+				.map(a -> a.getAuthority().replace("ROLE_", ""))
 				.collect(Collectors.joining(" "));
 
 		Instant now = Instant.now();
