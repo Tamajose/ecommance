@@ -51,7 +51,7 @@ public class PaymentService {
     }
 
     @Transactional(readOnly = true)
-    public List<PaymentResponse> getAllPayment(){
+    public List<PaymentResponse> getAllPayments(){
         return paymentRepository.findAll().stream().map(this::toResponse).toList();
     }
 
