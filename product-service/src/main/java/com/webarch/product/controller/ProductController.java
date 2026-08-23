@@ -4,6 +4,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.webarch.product.domain.ProductCategory;
+import com.webarch.product.dto.ProductRequest;
 import com.webarch.product.dto.StockRequest;
 import com.webarch.product.dto.ProductResponse;
 import com.webarch.product.service.ProductService;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 
 
 
