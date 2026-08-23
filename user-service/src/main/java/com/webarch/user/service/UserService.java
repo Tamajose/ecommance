@@ -41,7 +41,7 @@ public class UserService implements UserDetailsService {
 				.password(passwordEncoder.encode(request.password()))
 				.name(request.name())
 				.phone(request.phone())
-				.role(request.role() != null ? request.role() : Role.USER)
+				.role(request.role() != null ? request.role() : Role.BUYER)
 				.build();
 
 		User saved = userRepository.save(user);

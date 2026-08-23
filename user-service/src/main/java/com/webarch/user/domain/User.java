@@ -63,7 +63,7 @@ public class User {
 	void onCreate() {
 		this.createdAt = Instant.now();
 		if (this.role == null) {
-			this.role = Role.USER;
+			this.role = Role.BUYER;
 		}
 		this.enabled = true;
 	}

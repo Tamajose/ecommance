@@ -1,6 +1,7 @@
 package com.webarch.user.domain;
 
 public enum Role {
-	USER,
+	BUYER,
+	SELLER,
 	ADMIN
 }
