@@ -1,5 +1,6 @@
 package com.webarch.cart.client;
 
+import com.webarch.cart.dto.ShippingAddress;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -33,9 +34,6 @@ public class OrderClient {
 	}
 
 	public record OrderItemRequest(Long productId, Integer quantity) {
-	}
-
-	public record ShippingAddress(String line, String city, String postalCode, String country) {
 	}
 
 	public record OrderRequest(
