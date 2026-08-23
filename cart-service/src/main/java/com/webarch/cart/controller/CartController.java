@@ -1,55 +1,60 @@
 package com.webarch.cart.controller;
 
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.webarch.cart.dto.CartItemRequest;
 import com.webarch.cart.dto.CartResponse;
+import com.webarch.cart.dto.CheckoutRequest;
 import com.webarch.cart.dto.UpdateQuantityRequest;
 import com.webarch.cart.service.CartService;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/carts")
 @RequiredArgsConstructor
 public class CartController {
-    private final CartService cartService;
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<CartResponse> getCart(@PathVariable Long userId){
-        return ResponseEntity.ok(cartService.getCart(userId));
-    }
+	private final CartService cartService;
 
-    @PostMapping("/{userId}/items")
-    public ResponseEntity<CartResponse> addItem(@PathVariable Long userId, @Valid @RequestBody CartItemRequest request){
-        return ResponseEntity.ok(cartService.addItem(userId, request));
-    }
+	private String usernameOf(Jwt jwt) {
+		return jwt.getSubject();
+	}
 
-    @PutMapping("/{userId}/items/{productId}")
-    public ResponseEntity<CartResponse> updateItemQuantity(
-            @PathVariable Long userId, @PathVariable Long productId, @Valid @RequestBody UpdateQuantityRequest request){
+	@GetMapping
+	public ResponseEntity<CartResponse> getCart(@AuthenticationPrincipal Jwt jwt) {
+		return ResponseEntity.ok(cartService.getCart(usernameOf(jwt)));
+	}
 
-        return ResponseEntity.ok(cartService.updateItemQuantity(userId, productId, request.quantity()));
-    }
+	@PostMapping("/items")
+	public ResponseEntity<CartResponse> addItem(@AuthenticationPrincipal Jwt jwt,
+			@Valid @RequestBody CartItemRequest request) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addItem(usernameOf(jwt), request));
+	}
 
-    @DeleteMapping("/{userId}/items/{productId}")
-    public ResponseEntity<CartResponse> removeItem(@PathVariable Long userId, @PathVariable Long productId){
-        return ResponseEntity.ok(cartService.removeItem(userId, productId));
-    }
+	@PutMapping("/items/{productId}")
+	public ResponseEntity<CartResponse> updateItemQuantity(@AuthenticationPrincipal Jwt jwt,
+			@PathVariable Long productId, @Valid @RequestBody UpdateQuantityRequest request) {
+		return ResponseEntity.ok(cartService.updateItemQuantity(usernameOf(jwt), productId, request.quantity()));
+	}
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> clearCart(@PathVariable Long userId){
-        cartService.clearCart(userId);
+	@DeleteMapping("/items/{productId}")
+	public ResponseEntity<CartResponse> removeItem(@AuthenticationPrincipal Jwt jwt, @PathVariable Long productId) {
+		return ResponseEntity.ok(cartService.removeItem(usernameOf(jwt), productId));
+	}
 
-        return ResponseEntity.noContent().build();
-    }
+	@DeleteMapping
+	public ResponseEntity<Void> clearCart(@AuthenticationPrincipal Jwt jwt) {
+		cartService.clearCart(usernameOf(jwt));
+		return ResponseEntity.noContent().build();
+	}
+
+	@PostMapping("/checkout")
+	public ResponseEntity<Long> checkout(@AuthenticationPrincipal Jwt jwt, @Valid @RequestBody CheckoutRequest request) {
+		Long orderId = cartService.checkout(usernameOf(jwt), jwt.getTokenValue(), request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(orderId);
+	}
 }

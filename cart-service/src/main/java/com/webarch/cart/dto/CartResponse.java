@@ -5,12 +5,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record CartResponse(
-    Long id,
-    Long userId,
-    List<CartItemResponse> items,
-    Integer totalItems,
-    BigDecimal totalAmount,
-    LocalDateTime createdAt,
-    LocalDateTime updatedAt
+		Long id,
+		String username,
+		List<CartItemResponse> items,
+		Integer totalItems,
+		BigDecimal totalAmount,
+		LocalDateTime createdAt,
+		LocalDateTime updatedAt
 ) {
 }

@@ -9,5 +9,5 @@ import com.webarch.cart.domain.Cart;
 
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
-    Optional<Cart> findByUserId(Long userId);
+	Optional<Cart> findByUsername(String username);
 }

@@ -4,16 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,33 +19,33 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class Cart {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false, unique = true)
-    private Long userId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<CartItem> items = new ArrayList<>();
+	@Column(nullable = false, unique = true)
+	private String username;
 
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
+	@OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+	@Builder.Default
+	private List<CartItem> items = new ArrayList<>();
 
-    @Column(nullable = false)
-    private LocalDateTime updatedAt;
+	@Column(nullable = false, updatable = false)
+	private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate(){
-        LocalDateTime now = LocalDateTime.now();
+	@Column(nullable = false)
+	private LocalDateTime updatedAt;
 
-        createdAt = now;
-        updatedAt = now;
-    }
+	@PrePersist
+	protected void onCreate() {
+		LocalDateTime now = LocalDateTime.now();
+		createdAt = now;
+		updatedAt = now;
+	}
 
-    @PreUpdate
-    protected void onUpdate(){
-        updatedAt = LocalDateTime.now();
-    }
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = LocalDateTime.now();
+	}
 }
