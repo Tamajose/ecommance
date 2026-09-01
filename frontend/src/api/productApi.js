@@ -32,7 +32,7 @@ export async function createProduct(product){
 
 export async function updateProduct(id, product){
     return request(API_URLS.product, `/api/products/${id}`, {
-        method: "PUT",
+        method: "PATCH",
         body: JSON.stringify(product)
     });
 }

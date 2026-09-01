@@ -35,7 +35,7 @@ public class CartController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(cartService.addItem(usernameOf(jwt), request));
 	}
 
-	@PutMapping("/items/{productId}")
+	@PatchMapping("/items/{productId}")
 	public ResponseEntity<CartResponse> updateItemQuantity(@AuthenticationPrincipal Jwt jwt,
 			@PathVariable Long productId, @Valid @RequestBody UpdateQuantityRequest request) {
 		return ResponseEntity.ok(cartService.updateItemQuantity(usernameOf(jwt), productId, request.quantity()));

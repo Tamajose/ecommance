@@ -41,7 +41,7 @@ public class UserController {
 		return ResponseEntity.ok(userService.getUserById(id));
 	}
 
-	@PutMapping("/{id}/address")
+	@PatchMapping("/{id}/address")
 	public ResponseEntity<UserResponse> updateAddress(@PathVariable Long id,
 			@Valid @RequestBody AddressRequest request) {
 		return ResponseEntity.ok(userService.updateAddress(id, request));
