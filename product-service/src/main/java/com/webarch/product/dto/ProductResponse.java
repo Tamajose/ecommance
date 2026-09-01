@@ -13,6 +13,7 @@ public record ProductResponse(
     Integer stockQuantity,
     ProductCategory category,
     String imageURL,
+    String sellerUsername,
     Boolean active,
     LocalDateTime createdAt,
     LocalDateTime updatedAt

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.webarch.product.domain.Product;
 import com.webarch.product.domain.ProductCategory;
@@ -11,6 +12,7 @@ import com.webarch.product.dto.ProductRequest;
 import com.webarch.product.dto.ProductResponse;
 import com.webarch.product.repository.ProductRepository;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +22,7 @@ public class ProductService {
     private final ProductRepository productRepository;
 
     @Transactional
-    public ProductResponse createProduct(ProductRequest request){
+    public ProductResponse createProduct(ProductRequest request, String sellerUsername){
         Product product = Product.builder()
                             .name(request.name())
                             .description(request.description())
@@ -28,6 +30,7 @@ public class ProductService {
                             .stockQuantity(request.stockQuantity())
                             .category(request.category())
                             .imageURL(request.imageURL())
+                            .sellerUsername(sellerUsername)
                             .active(true)
                             .build();
 
@@ -45,6 +48,7 @@ public class ProductService {
             product.getStockQuantity(),
             product.getCategory(),
             product.getImageURL(),
+            product.getSellerUsername(),
             product.getActive(),
             product.getCreatedAt(),
             product.getUpdatedAt()
@@ -57,19 +61,26 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
+    public List<ProductResponse> getProductsBySeller(String sellerUsername){
+        return productRepository.findBySellerUsername(sellerUsername).stream().map(this::toResponse).toList();
+    }
+
+    @Transactional(readOnly = true)
     public ProductResponse getProductById(Long id){
         Product product = productRepository.findById(id).orElseThrow(
-            () -> new RuntimeException("No Product is found with Product ID: " + id)
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Product is found with Product ID: " + id)
         );
 
         return toResponse(product);
     }
 
     @Transactional
-    public ProductResponse updateProduct(Long id, ProductRequest request){
+    public ProductResponse updateProduct(Long id, ProductRequest request, String principalUsername, boolean isAdmin){
         Product product = productRepository.findById(id).orElseThrow(
-            () -> new RuntimeException("No Product is found with Product ID: " + id)
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Product is found with Product ID: " + id)
         );
+
+        ensureOwnership(product, principalUsername, isAdmin);
 
         product.setName(request.name());
         product.setDescription(request.description());
@@ -84,13 +95,25 @@ public class ProductService {
     }
 
     @Transactional
-    public void deleteProduct(Long id){
+    public void deleteProduct(Long id, String principalUsername, boolean isAdmin){
         Product product = productRepository.findById(id).orElseThrow(
-            () -> new RuntimeException("No Product is found with Product ID: " + id)
+            () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No Product is found with Product ID: " + id)
         );
+
+        ensureOwnership(product, principalUsername, isAdmin);
 
         product.setActive(false);
         productRepository.save(product);
+    }
+
+    private void ensureOwnership(Product product, String principalUsername, boolean isAdmin){
+        if(isAdmin){
+            return;
+        }
+
+        if(!principalUsername.equals(product.getSellerUsername())){
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only manage your own product listings");
+        }
     }
 
     @Transactional

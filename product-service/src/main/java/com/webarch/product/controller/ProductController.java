@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,9 +49,18 @@ public class ProductController {
         return ResponseEntity.ok(productService.adjustStock(id, request.delta()));
     }
 
+    private boolean isAdmin(Jwt jwt){
+        String scope = jwt.getClaimAsString("scope");
+        if(scope == null || scope.isBlank()){
+            return false;
+        }
+        return java.util.List.of(scope.split(" ")).contains("ADMIN");
+    }
+
     @PostMapping
-    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request){
-        ProductResponse response = productService.createProduct(request);
+    public ResponseEntity<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request,
+            @AuthenticationPrincipal Jwt jwt){
+        ProductResponse response = productService.createProduct(request, jwt.getSubject());
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -57,7 +68,7 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<List<ProductResponse>> getProducts(
         @RequestParam(required = false) String name, @RequestParam(required = false) ProductCategory category){
-        
+
         if(name != null && !name.isBlank()){
             return ResponseEntity.ok(productService.searchProducts(name));
         }
@@ -69,19 +80,25 @@ public class ProductController {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
+    @GetMapping("/my")
+    public ResponseEntity<List<ProductResponse>> getMyProducts(@AuthenticationPrincipal Jwt jwt){
+        return ResponseEntity.ok(productService.getProductsBySeller(jwt.getSubject()));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponse> getProductById(@PathVariable Long id){
         return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest request){
-        return ResponseEntity.ok(productService.updateProduct(id, request));
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Long id, @Valid @RequestBody ProductRequest request,
+            @AuthenticationPrincipal Jwt jwt){
+        return ResponseEntity.ok(productService.updateProduct(id, request, jwt.getSubject(), isAdmin(jwt)));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable Long id){
-        productService.deleteProduct(id);
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id, @AuthenticationPrincipal Jwt jwt){
+        productService.deleteProduct(id, jwt.getSubject(), isAdmin(jwt));
 
         return ResponseEntity.noContent().build();
     }

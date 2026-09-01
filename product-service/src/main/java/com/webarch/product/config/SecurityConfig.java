@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
@@ -27,15 +28,12 @@ public class SecurityConfig {
 								"/swagger-ui/**",
 								"/v3/api-docs/**"
 						).permitAll()
-						.requestMatchers(
-								org.springframework.http.HttpMethod.GET,
-								"/api/products/**"
-						).permitAll()
-						.requestMatchers(
-								org.springframework.http.HttpMethod.POST,
-								"/api/products/*/stock"
-						).permitAll()
-						.requestMatchers("/api/products/**").hasAuthority("ADMIN")
+						.requestMatchers(HttpMethod.GET, "/api/products/my").hasAnyAuthority("ADMIN", "SELLER")
+						.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/products/*/stock").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/products").hasAnyAuthority("ADMIN", "SELLER")
+						.requestMatchers(HttpMethod.PUT, "/api/products/**").hasAnyAuthority("ADMIN", "SELLER")
+						.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN", "SELLER")
 						.anyRequest().authenticated()
 				)
 				.oauth2ResourceServer(oauth2 -> oauth2

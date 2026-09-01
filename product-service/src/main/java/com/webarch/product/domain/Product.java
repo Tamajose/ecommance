@@ -48,6 +48,9 @@ public class Product {
     @Column(nullable = false)
     private ProductCategory category;
 
+    @Column(nullable = false)
+    private String sellerUsername;
+
     private String imageURL;
 
     @Column(nullable = false)

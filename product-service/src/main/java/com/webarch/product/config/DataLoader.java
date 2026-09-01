@@ -29,6 +29,7 @@ public class DataLoader {
                     .price(new BigDecimal("275000.00"))
                     .stockQuantity(10)
                     .category(ProductCategory.ELECTRONICS)
+                    .sellerUsername("seller")
                     .imageURL("https://example.com/macbook.jpg")
                     .active(true)
                     .build()

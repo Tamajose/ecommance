@@ -18,17 +18,37 @@ public class DataLoader implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) {
+		createUserIfAbsent(new UserRequest(
+				"admin",
+				"admin@ecommance.com",
+				"admin123",
+				"Admin",
+				"+10000000000",
+				Role.ADMIN
+		));
+		createUserIfAbsent(new UserRequest(
+				"seller",
+				"seller@ecommance.com",
+				"seller123",
+				"Seller User",
+				"+10000000001",
+				Role.SELLER
+		));
+		createUserIfAbsent(new UserRequest(
+				"buyer",
+				"buyer@ecommance.com",
+				"buyer123",
+				"Buyer User",
+				"+10000000002",
+				Role.BUYER
+		));
+	}
+
+	private void createUserIfAbsent(UserRequest request) {
 		try {
-			userService.createUser(new UserRequest(
-					"admin",
-					"admin@ecommance.com",
-					"admin123",
-					"Admin",
-					"+10000000000",
-					Role.ADMIN
-			));
+			userService.createUser(request);
 		} catch (IllegalArgumentException ignored) {
-			// admin already exists
+			// user already exists
 		}
 	}
 }
