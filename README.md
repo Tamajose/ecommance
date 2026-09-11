@@ -1,9 +1,10 @@
 # ecommance
 
 ## Port Details
-1. User Service - http://localhost:8081
-2. Product Service - http://localhost:8082
-3. Order Service - http://localhost:8083
-4. Cart Service - http://localhost:8084
-5. Payment Service - http://localhost:8085
-6. Frontend 5173
+1. API Gateway - http://localhost:8080 (Single unified entrypoint for frontend)
+2. User Service - http://localhost:8081
+3. Product Service - http://localhost:8082
+4. Order Service - http://localhost:8083
+5. Cart Service - http://localhost:8084
+6. Payment Service - http://localhost:8085
+7. Frontend - http://localhost:5173

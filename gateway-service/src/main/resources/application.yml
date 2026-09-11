@@ -1,0 +1,44 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway-service
+
+services:
+  user:
+    url: ${USER_SERVICE_URL:http://localhost:8081}
+  product:
+    url: ${PRODUCT_SERVICE_URL:http://localhost:8082}
+  order:
+    url: ${ORDER_SERVICE_URL:http://localhost:8083}
+  cart:
+    url: ${CART_SERVICE_URL:http://localhost:8084}
+  payment:
+    url: ${PAYMENT_SERVICE_URL:http://localhost:8085}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: API Gateway
+        url: /v3/api-docs
+      - name: User Service
+        url: /v3/api-docs/user
+      - name: Product Service
+        url: /v3/api-docs/product
+      - name: Order Service
+        url: /v3/api-docs/order
+      - name: Cart Service
+        url: /v3/api-docs/cart
+      - name: Payment Service
+        url: /v3/api-docs/payment
+
