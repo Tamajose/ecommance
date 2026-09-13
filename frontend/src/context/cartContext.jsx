@@ -1,20 +1,18 @@
-import { createContext, useContext, useState, useEffect } from "react";
-import { getCart as getCartAPI, addItem as addItemAPI, updateItemQuantity as updateItemQuantityAPI,
-    removeItem as removeItemAPI, clearCart as clearCartAPI } from "../api/cartApi";
+import { createContext, useState, useEffect } from "react";
+import { getCart as getCartAPI, addItem as addItemAPI, updateItemQuantity as updateItemQuantityAPI, removeItem as removeItemAPI, clearCart as clearCartAPI } from '../api/cartApi';
+import { useAuth } from './AuthContext';
 
 const cartContext = createContext(null);
 
-export function cartProvider({ children }){
+export function CartProvider({ children }){
     const [ cart, setCart ] = useState(null);
     const { isAuthenticated } = useAuth();
 
     useEffect(() => {
-        if(isAuthenticated){
-            fetchCart();
-        } else{
-            setCart(null);
-        }
-    }, [isAuthenticated]);
+    if(isAuthenticated){
+        fetchCart();
+    }
+}, [isAuthenticated]);
 
     async function fetchCart(){
         try{
@@ -28,7 +26,7 @@ export function cartProvider({ children }){
     async function addItem(productId, quantity=1){
         try{
             const response = await addItemAPI(productId, quantity);
-            setCart(response)
+            setCart(response);
         } catch(error){
             console.error("Error adding item to Cart, ", error);
         }
@@ -37,7 +35,7 @@ export function cartProvider({ children }){
     async function updateQuantity(productId, quantity){
         try{
             const response = await updateItemQuantityAPI(productId, quantity);
-            setCart(response)
+            setCart(response);
         } catch(error){
             console.error("Error updating quantity, ", error);
         }
@@ -45,16 +43,16 @@ export function cartProvider({ children }){
 
     async function removeItem(productId){
         try{
-            const response = await removeItem(productId);
-            setCart(response)
+            const response = await removeItemAPI(productId);
+            setCart(response);
         } catch(error){
-            console.error("Error removing item to Cart, ", error);
+            console.error("Error removing item from Cart, ", error);
         }
     }
 
     async function clearCart(){
         try{
-            await clearCart();
+            await clearCartAPI();
             setCart(null);
         } catch(error){
             console.error("Error clearing Cart, ", error);

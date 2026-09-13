@@ -1,4 +1,4 @@
-const GATEWAY_URL = import.meta.env.VITE_API_URL || "http://localhost:8080";
+const GATEWAY_URL = import.meta.env.VITE_API_URL || "http://localhost:8090";
 
 const API_URLS = {
     gateway: GATEWAY_URL,

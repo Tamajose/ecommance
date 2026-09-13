@@ -18,7 +18,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
         // Use allowedOriginPatterns instead of a wildcard "*" when allowCredentials=true
         config.setAllowedOriginPatterns(List.of(
-            "http://localhost:[*]",   // any localhost port (covers Swagger UI at :8080 and the app)
+            "http://localhost:[*]",   // any localhost port (covers Swagger UI at :8090 and the app)
             "http://127.0.0.1:[*]",
             "http://frontend:*"
         ));

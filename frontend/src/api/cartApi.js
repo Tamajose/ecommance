@@ -18,8 +18,14 @@ export async function updateItemQuantity(productId, quantity){
     });
 }
 
-export async function removeItem(productId){
+export async function removeItem(productId) {
     return request(API_URLS.cart, `/api/carts/items/${productId}`, {
+        method: "DELETE"
+    });
+}
+
+export async function clearCart() {
+    return request(API_URLS.cart, "/api/carts", {
         method: "DELETE"
     });
 }
