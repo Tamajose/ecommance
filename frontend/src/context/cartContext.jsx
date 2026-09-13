@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { getCart as getCartAPI, addItem as addItemAPI, updateItemQuantity as updateItemQuantityAPI, removeItem as removeItemAPI, clearCart as clearCartAPI } from '../api/cartApi';
 import { useAuth } from './AuthContext';
 
@@ -9,10 +9,10 @@ export function CartProvider({ children }){
     const { isAuthenticated } = useAuth();
 
     useEffect(() => {
-    if(isAuthenticated){
-        fetchCart();
-    }
-}, [isAuthenticated]);
+        if(isAuthenticated){
+            fetchCart();
+        }
+    }, [isAuthenticated]);
 
     async function fetchCart(){
         try{
@@ -64,4 +64,9 @@ export function CartProvider({ children }){
             {children}
         </cartContext.Provider>
     );
+}
+
+// eslint-disable-next-line react-refresh/only-export-components
+export function useCart() {
+    return useContext(cartContext);
 }
