@@ -13,13 +13,15 @@ export default function Cart() {
     const [city, setCity] = useState("");
     const [postalCode, setPostalCode] = useState("");
     const [country, setCountry] = useState("");
+    const [paymentMethod, setPaymentMethod] = useState("CASH_ON_DELIVERY");
 
     const handleCheckout = async (e) => {
         e.preventDefault();
         try {
             const checkoutData = {
                 recipientName,
-                shippingAddress: { line, city, postalCode, country }
+                shippingAddress: { line, city, postalCode, country },
+                paymentMethod
             };
             const orderId = await checkout(checkoutData);
             clearCart();
@@ -66,6 +68,11 @@ export default function Cart() {
                         <input type="text" placeholder="City" value={city} onChange={e => setCity(e.target.value)} required />
                         <input type="text" placeholder="Postal Code" value={postalCode} onChange={e => setPostalCode(e.target.value)} required />
                         <input type="text" placeholder="Country" value={country} onChange={e => setCountry(e.target.value)} required />
+                        <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+                            <option value="CASH_ON_DELIVERY">Cash on delivery</option>
+                            <option value="CARD">Card</option>
+                            <option value="MOBILE_BANKING">Mobile banking</option>
+                        </select>
                         <button type="submit">Place Order</button>
                     </form>
                 </div>

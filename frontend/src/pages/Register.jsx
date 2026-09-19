@@ -4,7 +4,9 @@ import { register } from "../api/authApi";
 
 export default function Register() {
     const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [name, setName] = useState("");
     const navigate = useNavigate();
     const [error, setError] = useState(null);
 
@@ -12,7 +14,7 @@ export default function Register() {
         e.preventDefault();
         setError(null);
         try {
-            await register({ username, password }); 
+            await register({ username, email, password, name });
             navigate("/login");
         } catch (err) {
             setError(err.message || "Failed to register");
@@ -25,6 +27,8 @@ export default function Register() {
             {error && <p className="error">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+                <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+                <input type="text" placeholder="Full name" value={name} onChange={e => setName(e.target.value)} required />
                 <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
                 <button type="submit">Register</button>
             </form>

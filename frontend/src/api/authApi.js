@@ -11,7 +11,7 @@ export async function login(username, password){
 }
 
 export async function register(userData){
-    return request(API_URLS.user, "/api/auth/register", {
+    return request(API_URLS.user, "/api/users/register", {
         method: "POST",
         body: JSON.stringify(userData)
     });
