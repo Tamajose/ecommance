@@ -73,9 +73,10 @@ h1, h2, h3 {
 }
 
 .container {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 24px 32px;
   flex: 1;
 }
 
@@ -382,11 +383,15 @@ h1, h2, h3 {
   flex-shrink: 0;
 }
 
-/* Product Grid */
+.products-container {
+  width: 100%;
+}
+
 .products-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 20px;
+  width: 100%;
 }
 
 /* Product Card */
@@ -1084,6 +1089,7 @@ h1, h2, h3 {
 
   .products-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 14px;
   }
 
   .cart-item {
