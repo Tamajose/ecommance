@@ -18,8 +18,10 @@ export function CartProvider({ children }){
         try{
             const response = await getCartAPI();
             setCart(response);
+            return response;
         } catch(error){
             console.error("Error fetching Cart, ", error);
+            throw error;
         }
     }
 
@@ -27,8 +29,10 @@ export function CartProvider({ children }){
         try{
             const response = await addItemAPI(productId, quantity);
             setCart(response);
+            return response;
         } catch(error){
             console.error("Error adding item to Cart, ", error);
+            throw error;
         }
     }
 
@@ -36,8 +40,10 @@ export function CartProvider({ children }){
         try{
             const response = await updateItemQuantityAPI(productId, quantity);
             setCart(response);
+            return response;
         } catch(error){
             console.error("Error updating quantity, ", error);
+            throw error;
         }
     }
 
@@ -45,8 +51,10 @@ export function CartProvider({ children }){
         try{
             const response = await removeItemAPI(productId);
             setCart(response);
+            return response;
         } catch(error){
             console.error("Error removing item from Cart, ", error);
+            throw error;
         }
     }
 
@@ -56,11 +64,12 @@ export function CartProvider({ children }){
             setCart(null);
         } catch(error){
             console.error("Error clearing Cart, ", error);
+            throw error;
         }
     }
 
     return(
-        <cartContext.Provider value={{ cart, fetchCart, addItem, updateQuantity, removeItem, clearCart }}>
+        <cartContext.Provider value={{ cart: isAuthenticated ? cart : null, fetchCart, addItem, updateQuantity, removeItem, clearCart }}>
             {children}
         </cartContext.Provider>
     );
