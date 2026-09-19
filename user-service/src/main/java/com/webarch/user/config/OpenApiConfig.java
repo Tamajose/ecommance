@@ -15,7 +15,7 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
-	@Value("${gateway.url:http://localhost:8080}")
+	@Value("${gateway.url:http://localhost:8090}")
 	private String gatewayUrl;
 
 	@Bean
