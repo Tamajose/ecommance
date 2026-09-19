@@ -32,8 +32,8 @@ export default function ProductDetail() {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
-    if (!product) return <div>Product not found</div>;
+    if (loading) return <div className="loading">Loading...</div>;
+    if (!product) return <div className="loading">Product not found</div>;
 
     return (
         <div className="product-detail">
@@ -44,12 +44,18 @@ export default function ProductDetail() {
                     <div className="no-image">No Image</div>
                 )}
             </div>
+
             <div className="product-info">
                 <h2>{product.name}</h2>
                 <p className="category">{product.category}</p>
-                <p className="price">BDT{Number(product.price).toFixed(2)}</p>
                 <p className="description">{product.description}</p>
-                <p>Available: {product.stockQuantity}</p>
+            </div>
+
+            <div className="buy-box">
+                <p className="price">BDT{Number(product.price).toFixed(2)}</p>
+                <p className="in-stock">
+                    {product.stockQuantity > 0 ? `${product.stockQuantity} in stock` : "Out of stock"}
+                </p>
                 <input
                     type="number"
                     min="1"
@@ -57,7 +63,9 @@ export default function ProductDetail() {
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
                 />
-                <button onClick={handleAddToCart}>Add to Cart</button>
+                <button className="button" onClick={handleAddToCart} disabled={product.stockQuantity === 0}>
+                    Add to Cart
+                </button>
             </div>
         </div>
     );

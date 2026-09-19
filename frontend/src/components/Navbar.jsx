@@ -3,7 +3,7 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 
 export default function Navbar(){
-    const { user, logout } = useAuth();
+    const { user, logout, isAdmin, isSeller } = useAuth();
     const { cart } = useCart();
 
     return(
@@ -14,25 +14,34 @@ export default function Navbar(){
 
             <div className="navbar-links">
                 <Link to="/products">Products</Link>
-                {user && <Link to="/cart">Cart{cart?.totalItems ? ` (${cart.totalItems})` : ""}</Link>}
                 {user && <Link to="/orders">My Orders</Link>}
+                {(isSeller || isAdmin) && <Link to="/my-products">My Products</Link>}
             </div>
 
-            {user ? (
-                <>
-                    <span className="username">
-                        {user.username}
-                    </span>
+            <div className="navbar-right">
+                {user && (
+                    <Link to="/cart" className="cart-link">
+                        Cart
+                        {cart?.totalItems ? <span className="cart-count">{cart.totalItems}</span> : null}
+                    </Link>
+                )}
 
-                    <button onClick={logout}>
-                        Logout
-                    </button>
-                </>
-            ) : (
-                <Link to="/login">
-                    Login
-                </Link>
-            )}
+                {user ? (
+                    <>
+                        <span className="username">
+                            {user.username}
+                        </span>
+
+                        <button onClick={logout}>
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    <Link to="/login">
+                        Login
+                    </Link>
+                )}
+            </div>
         </nav>
     );
 }

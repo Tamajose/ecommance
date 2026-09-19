@@ -21,7 +21,7 @@ export default function Products() {
         }
     };
 
-    if (loading) return <div>Loading products...</div>;
+    if (loading) return <div className="loading">Loading products...</div>;
 
     return (
         <div className="products-container">

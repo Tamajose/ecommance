@@ -23,6 +23,10 @@ export async function getProductById(id){
     return request(API_URLS.product, `/api/products/${id}`);
 }
 
+export async function getMyProducts(){
+    return request(API_URLS.product, "/api/products/my");
+}
+
 export async function createProduct(product){
     return request(API_URLS.product, "/api/products", {
         method: "POST",

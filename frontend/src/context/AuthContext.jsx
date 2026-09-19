@@ -32,7 +32,11 @@ export function AuthProvider({ children }){
         setUser(null);
     }
 
-    const isAdmin = user?.role === "ADMIN";
+    // user.role is really the JWT's space-separated scope (e.g. "SELLER FACTOR_PASSWORD"),
+    // not a single value, so membership must be checked token-by-token.
+    const roleTokens = user?.role ? user.role.split(" ") : [];
+    const isAdmin = roleTokens.includes("ADMIN");
+    const isSeller = roleTokens.includes("SELLER");
 
     return(
         <authContext.Provider
@@ -41,6 +45,8 @@ export function AuthProvider({ children }){
                 login,
                 logout,
                 isAdmin,
+                isSeller,
+                roleTokens,
                 isAuthenticated: !!user,
             }}
         >

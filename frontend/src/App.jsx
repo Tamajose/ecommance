@@ -8,6 +8,8 @@ import Products from "./pages/Products";
 import ProductDetail from "./pages/ProductDetail";
 import Cart from "./pages/Cart";
 import Orders from "./pages/Orders";
+import MyProducts from "./pages/MyProducts";
+import ProductForm from "./pages/ProductForm";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import "./App.css";
@@ -38,6 +40,30 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Orders />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-products"
+                element={
+                  <ProtectedRoute roles={["SELLER", "ADMIN"]}>
+                    <MyProducts />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-products/new"
+                element={
+                  <ProtectedRoute roles={["SELLER", "ADMIN"]}>
+                    <ProductForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/my-products/:id/edit"
+                element={
+                  <ProtectedRoute roles={["SELLER", "ADMIN"]}>
+                    <ProductForm />
                   </ProtectedRoute>
                 }
               />
