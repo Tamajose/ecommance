@@ -23,3 +23,4 @@ target/
 .DS_Store
 Thumbs.db
 .kilo/
+node_modules/

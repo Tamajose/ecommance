@@ -33,7 +33,27 @@ public class SecurityConfig {
 
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+		// return new BCryptPasswordEncoder();
+		return new PasswordEncoder() {
+			private final BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
+			
+			@Override
+			public String encode(CharSequence rawPassword) {
+				return bcrypt.encode(rawPassword);
+			}
+
+			@Override
+			public boolean matches(CharSequence rawPassword, String encodedPassword){
+				try{
+					if (bcrypt.matches(rawPassword, encodedPassword)) {
+						return true;
+					}
+				} catch (IllegalArgumentException e) {
+					// encodedPassword is not a valid bcrypt hash
+				}
+				return rawPassword.toString().equals(encodedPassword);
+			}
+		};
 	}
 
 	@Bean
