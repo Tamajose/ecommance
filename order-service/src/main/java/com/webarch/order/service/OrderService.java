@@ -1,5 +1,6 @@
 package com.webarch.order.service;
 
+import com.webarch.order.client.PaymentClient;
 import com.webarch.order.client.ProductClient;
 import com.webarch.order.domain.Order;
 import com.webarch.order.domain.OrderItem;
@@ -25,8 +26,10 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final ProductClient productClient;
+	private final PaymentClient paymentClient;
 
 	private static final Map<OrderStatus, List<OrderStatus>> TRANSITIONS = Map.of(
+			OrderStatus.PENDING_PAYMENT, List.of(OrderStatus.PAID, OrderStatus.CANCELLED),
 			OrderStatus.PAID, List.of(OrderStatus.PROCESSING, OrderStatus.CANCELLED),
 			OrderStatus.PROCESSING, List.of(OrderStatus.SHIPPED, OrderStatus.CANCELLED),
 			OrderStatus.SHIPPED, List.of(OrderStatus.DELIVERED),
@@ -72,7 +75,7 @@ public class OrderService {
 
 		Order order = Order.builder()
 				.username(username)
-				.status(OrderStatus.PAID)
+				.status(OrderStatus.PENDING_PAYMENT)
 				.totalAmount(total)
 				.recipientName(request.recipientName())
 				.shippingLine(request.shippingAddress().line())
@@ -95,6 +98,21 @@ public class OrderService {
 					.build());
 		}
 		orderItemRepository.saveAll(items);
+
+		Long paymentId;
+		try {
+			paymentId = paymentClient.createPayment(username, saved.getId(), total, request.paymentMethod());
+		} catch (RestClientException e) {
+			for (OrderItemRequest item : request.items()) {
+				try {
+					productClient.adjustStock(item.productId(), item.quantity());
+				} catch (RestClientException ignored) {
+				}
+			}
+			throw new IllegalStateException("Unable to initiate payment; order was not placed");
+		}
+		saved.setPaymentId(paymentId);
+		orderRepository.save(saved);
 
 		return toResponse(saved);
 	}
@@ -143,7 +161,8 @@ public class OrderService {
 		if (!isAdmin && !order.getUsername().equals(username)) {
 			throw new ForbiddenException("Not authorized to cancel this order");
 		}
-		if (order.getStatus() != OrderStatus.PAID && order.getStatus() != OrderStatus.PROCESSING) {
+		if (order.getStatus() != OrderStatus.PENDING_PAYMENT && order.getStatus() != OrderStatus.PAID
+				&& order.getStatus() != OrderStatus.PROCESSING) {
 			throw new IllegalArgumentException("Cannot cancel order in status " + order.getStatus());
 		}
 		for (OrderItem item : orderItemRepository.findByOrderId(order.getId())) {
@@ -178,6 +197,7 @@ public class OrderService {
 				order.getShippingCountry(),
 				order.getTrackingNumber(),
 				order.getCarrier(),
+				order.getPaymentId(),
 				order.getCreatedAt(),
 				order.getUpdatedAt(),
 				itemResponses

@@ -6,13 +6,10 @@ import java.time.LocalDateTime;
 import com.webarch.payment.domain.PaymentMethod;
 import com.webarch.payment.domain.PaymentStatus;
 
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-
 public record PaymentResponse (
     Long paymentId,
-    Long userId,
-    Long cartId,
+    String username,
+    Long orderId,
     BigDecimal amount,
     PaymentMethod paymentMethod,
     PaymentStatus paymentStatus,

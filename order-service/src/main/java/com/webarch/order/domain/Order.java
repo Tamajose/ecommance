@@ -53,6 +53,9 @@ public class Order {
 	@Column
 	private String carrier;
 
+	@Column
+	private Long paymentId;
+
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
 

@@ -120,7 +120,7 @@ public class CartService {
 				.map(i -> new OrderClient.OrderItemRequest(i.getProductId(), i.getQuantity()))
 				.toList();
 		OrderClient.OrderRequest orderRequest = new OrderClient.OrderRequest(
-				items, request.recipientName(), request.shippingAddress());
+				items, request.recipientName(), request.shippingAddress(), request.paymentMethod());
 		Long orderId = orderClient.createOrder(token, orderRequest).id();
 		cartItemRepository.deleteAll(cart.getItems());
 		cart.getItems().clear();

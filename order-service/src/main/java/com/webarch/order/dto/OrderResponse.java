@@ -18,6 +18,7 @@ public record OrderResponse(
 		String shippingCountry,
 		String trackingNumber,
 		String carrier,
+		Long paymentId,
 		LocalDateTime createdAt,
 		LocalDateTime updatedAt,
 		List<OrderItemResponse> items

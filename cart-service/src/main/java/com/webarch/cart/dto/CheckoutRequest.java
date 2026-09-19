@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record CheckoutRequest(
 		@NotBlank String recipientName,
-		@NotNull @Valid ShippingAddress shippingAddress
+		@NotNull @Valid ShippingAddress shippingAddress,
+		@NotNull PaymentMethod paymentMethod
 ) {
 }

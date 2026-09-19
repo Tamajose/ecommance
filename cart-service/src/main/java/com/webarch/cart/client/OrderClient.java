@@ -1,5 +1,6 @@
 package com.webarch.cart.client;
 
+import com.webarch.cart.dto.PaymentMethod;
 import com.webarch.cart.dto.ShippingAddress;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -39,7 +40,8 @@ public class OrderClient {
 	public record OrderRequest(
 			List<OrderItemRequest> items,
 			String recipientName,
-			ShippingAddress shippingAddress
+			ShippingAddress shippingAddress,
+			PaymentMethod paymentMethod
 	) {
 	}
 
