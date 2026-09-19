@@ -1,4 +1,4 @@
-package com.webarch.cart.exception;
+package com.webarch.user.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +16,5 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<String> handleConflict(IllegalStateException ex) {
 		return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-	}
-
-	@ExceptionHandler(org.springframework.web.client.HttpStatusCodeException.class)
-	public ResponseEntity<String> handleDownstreamException(org.springframework.web.client.HttpStatusCodeException ex) {
-		String body = ex.getResponseBodyAsString();
-		return ResponseEntity.status(ex.getStatusCode()).body(body.isBlank() ? ex.getMessage() : body);
 	}
 }
