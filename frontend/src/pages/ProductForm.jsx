@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { createProduct, updateProduct, getProductById } from "../api/productApi";
 
@@ -18,13 +18,7 @@ export default function ProductForm() {
     const [loading, setLoading] = useState(isEditing);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (isEditing) {
-            loadProduct();
-        }
-    }, [id]);
-
-    const loadProduct = async () => {
+    const loadProduct = useCallback(async () => {
         try {
             const product = await getProductById(id);
             setName(product.name);
@@ -38,7 +32,13 @@ export default function ProductForm() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
+
+    useEffect(() => {
+        if (isEditing) {
+            loadProduct();
+        }
+    }, [isEditing, loadProduct]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

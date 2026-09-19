@@ -1,20 +1,22 @@
-import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getProductById } from "../api/productApi";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 
 export default function ProductDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { isAuthenticated } = useAuth();
+    const { addItem } = useCart();
+
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
-    const { addItem } = useCart();
+    const [actionMessage, setActionMessage] = useState(null);
 
-    useEffect(() => {
-        loadProduct();
-    }, [id]);
-
-    const loadProduct = async () => {
+    const loadProduct = useCallback(async () => {
         try {
             const data = await getProductById(id);
             setProduct(data);
@@ -23,12 +25,26 @@ export default function ProductDetail() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
-    const handleAddToCart = () => {
+    useEffect(() => {
+        loadProduct();
+    }, [loadProduct]);
+
+    const handleAddToCart = async () => {
+        if (!isAuthenticated) {
+            navigate("/login", { state: { from: location } });
+            return;
+        }
+
         if (product) {
-            addItem(product.id, quantity);
-            alert("Added to cart!");
+            try {
+                setActionMessage(null);
+                await addItem(product.id, quantity);
+                setActionMessage({ type: "success", text: "Added to cart successfully!" });
+            } catch (err) {
+                setActionMessage({ type: "error", text: err.message || "Failed to add to cart" });
+            }
         }
     };
 
@@ -66,6 +82,11 @@ export default function ProductDetail() {
                 <button className="button" onClick={handleAddToCart} disabled={product.stockQuantity === 0}>
                     Add to Cart
                 </button>
+                {actionMessage && (
+                    <p className={actionMessage.type === "success" ? "success" : "error"}>
+                        {actionMessage.text}
+                    </p>
+                )}
             </div>
         </div>
     );
