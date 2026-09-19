@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -7,6 +7,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
@@ -14,7 +15,7 @@ export default function Login() {
         setError(null);
         try {
             await login(username, password);
-            navigate("/");
+            navigate(location.state?.from?.pathname || "/");
         } catch (err) {
             setError(err.message || "Failed to login");
         }

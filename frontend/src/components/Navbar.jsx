@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 
 export default function Navbar(){
-    const { user, logout, isAdmin } = useAuth();
+    const { user, logout } = useAuth();
+    const { cart } = useCart();
 
     return(
         <nav className="navbar">
@@ -12,6 +14,8 @@ export default function Navbar(){
 
             <div className="navbar-links">
                 <Link to="/products">Products</Link>
+                {user && <Link to="/cart">Cart{cart?.totalItems ? ` (${cart.totalItems})` : ""}</Link>}
+                {user && <Link to="/orders">My Orders</Link>}
             </div>
 
             {user ? (

@@ -7,6 +7,7 @@ export default function ProductDetail() {
     const { id } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [quantity, setQuantity] = useState(1);
     const { addItem } = useCart();
 
     useEffect(() => {
@@ -26,7 +27,7 @@ export default function ProductDetail() {
 
     const handleAddToCart = () => {
         if (product) {
-            addItem(product.id, 1);
+            addItem(product.id, quantity);
             alert("Added to cart!");
         }
     };
@@ -49,6 +50,13 @@ export default function ProductDetail() {
                 <p className="price">BDT{Number(product.price).toFixed(2)}</p>
                 <p className="description">{product.description}</p>
                 <p>Available: {product.stockQuantity}</p>
+                <input
+                    type="number"
+                    min="1"
+                    max={product.stockQuantity}
+                    value={quantity}
+                    onChange={(e) => setQuantity(Number(e.target.value))}
+                />
                 <button onClick={handleAddToCart}>Add to Cart</button>
             </div>
         </div>

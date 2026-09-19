@@ -16,7 +16,7 @@ export async function getAllOrders(){
 }
 
 export async function getOrderById(id){
-    return request(API_URLS.order, `/api/orders/{id}`);
+    return request(API_URLS.order, `/api/orders/${id}`);
 }
 
 export async function updateOrderStatus(id, status){

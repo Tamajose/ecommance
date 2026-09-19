@@ -43,19 +43,25 @@ export default function Cart() {
             <div className="cart-items">
                 {cart.items.map(item => (
                     <div key={item.productId} className="cart-item">
-                        <span>Product ID: {item.productId}</span>
-                        <span>Quantity: 
-                            <input 
-                                type="number" min="1" value={item.quantity} 
+                        <div className="cart-item-info">
+                            <h4>{item.productName}</h4>
+                            <span>BDT{Number(item.unitPrice).toFixed(2)} each</span>
+                        </div>
+                        <span>Quantity:
+                            <input
+                                type="number" min="1" value={item.quantity}
                                 onChange={(e) => updateQuantity(item.productId, parseInt(e.target.value))}
                             />
                         </span>
+                        <span className="cart-item-price">BDT{Number(item.lineTotal).toFixed(2)}</span>
                         <button onClick={() => removeItem(item.productId)}>Remove</button>
                     </div>
                 ))}
             </div>
-            
+
             <div className="cart-summary">
+                <p>Total items: {cart.totalItems}</p>
+                <p>Total: BDT{Number(cart.totalAmount).toFixed(2)}</p>
                 <button onClick={() => setIsCheckingOut(!isCheckingOut)}>Proceed to Checkout</button>
             </div>
 

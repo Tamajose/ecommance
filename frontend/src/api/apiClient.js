@@ -43,11 +43,14 @@ async function request(baseURLOrEndpoint, endpointOrOptions, maybeOptions) {
     if (!response.ok) {
         let message = `Request failed: ${response.status}`;
 
-        try {
-            const error = await response.json();
-            message = error.message || message;
-        } catch {
-            // no response body or JSON parse failed
+        const body = await response.text().catch(() => "");
+        if (body) {
+            try {
+                const error = JSON.parse(body);
+                message = error.message || message;
+            } catch {
+                message = body;
+            }
         }
 
         throw new Error(message);
