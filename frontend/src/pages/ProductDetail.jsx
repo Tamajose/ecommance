@@ -82,6 +82,7 @@ export default function ProductDetail() {
             <div className="product-info">
                 <h2>{product.name}</h2>
                 <p className="category">{product.category}</p>
+                <p className="description">{product.description}</p>
                 <p className="seller-line">
                     Sold by <strong>{product.sellerUsername}</strong>
                 </p>
@@ -91,22 +92,26 @@ export default function ProductDetail() {
                         <button
                             type="button"
                             className="link-button"
-                            onClick={() => setReportTarget({
-                                targetType: "LISTING",
-                                targetId: product.id,
-                                targetLabel: product.name,
-                            })}
+                            onClick={() =>
+                                setReportTarget({
+                                    targetType: "LISTING",
+                                    targetId: product.id,
+                                    targetLabel: product.name,
+                                })
+                            }
                         >
                             Report this listing
                         </button>
                         <button
                             type="button"
                             className="link-button"
-                            onClick={() => setReportTarget({
-                                targetType: "USER",
-                                targetId: product.sellerUsername,
-                                targetLabel: product.sellerUsername,
-                            })}
+                            onClick={() =>
+                                setReportTarget({
+                                    targetType: "USER",
+                                    targetId: product.sellerUsername,
+                                    targetLabel: product.sellerUsername,
+                                })
+                            }
                         >
                             Report seller
                         </button>
@@ -124,7 +129,7 @@ export default function ProductDetail() {
             )}
 
             <div className="buy-box">
-                <p className="price">BDT{Number(product.price).toFixed(2)}</p>
+                <p className="price">BDT {Number(product.price).toFixed(2)}</p>
                 <div className="product-stock-status">
                     {product.stockQuantity > 0 ? (
                         <span className="stock-badge available">Available</span>
@@ -145,7 +150,9 @@ export default function ProductDetail() {
                             min="1"
                             max={product.stockQuantity}
                             value={quantity}
-                            onChange={(e) => setQuantity(Number(e.target.value))}
+                            onChange={(e) =>
+                                setQuantity(Number(e.target.value))
+                            }
                         />
                         <button
                             className="button"

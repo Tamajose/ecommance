@@ -15,7 +15,7 @@ export default function MyProducts() {
         try {
             const data = await getMyProducts();
             // getMyProducts includes soft-deleted (inactive) products; hide them here.
-            setProducts(data.filter(p => p.active !== false));
+            setProducts(data.filter((p) => p.active !== false));
         } catch (err) {
             setError(err.message || "Failed to load products");
         } finally {
@@ -27,7 +27,7 @@ export default function MyProducts() {
         if (!window.confirm("Delete this product?")) return;
         try {
             await deleteProduct(id);
-            setProducts(products.filter(p => p.id !== id));
+            setProducts(products.filter((p) => p.id !== id));
         } catch (err) {
             alert(err.message || "Failed to delete product");
         }
@@ -39,7 +39,9 @@ export default function MyProducts() {
         <div className="my-products-container">
             <div className="my-products-header">
                 <h2>My Products</h2>
-                <Link to="/my-products/new" className="button">Add Product</Link>
+                <Link to="/my-products/new" className="button">
+                    Add Product
+                </Link>
             </div>
 
             {error && <p className="error">{error}</p>}
@@ -48,22 +50,34 @@ export default function MyProducts() {
                 <p>You haven't listed any products yet.</p>
             ) : (
                 <div className="my-products-list">
-                    {products.map(product => (
+                    {products.map((product) => (
                         <div key={product.id} className="my-product-card">
                             <div className="my-product-info">
                                 <h4>{product.name}</h4>
                                 <p>
-                                    {product.category} &middot; BDT{Number(product.price).toFixed(2)} &middot;{" "}
+                                    {product.category} &middot; BDT{" "}
+                                    {Number(product.price).toFixed(2)} &middot;{" "}
                                     {product.stockQuantity > 0 ? (
-                                        <span className="stock-badge available">Available</span>
+                                        <span className="stock-badge available">
+                                            Available
+                                        </span>
                                     ) : (
-                                        <span className="stock-badge unavailable">Not Available</span>
+                                        <span className="stock-badge unavailable">
+                                            Not Available
+                                        </span>
                                     )}
                                 </p>
                             </div>
                             <div className="my-product-actions">
-                                <Link to={`/my-products/${product.id}/edit`}>Edit</Link>
-                                <button className="button-danger" onClick={() => handleDelete(product.id)}>Delete</button>
+                                <Link to={`/my-products/${product.id}/edit`}>
+                                    Edit
+                                </Link>
+                                <button
+                                    className="button-danger"
+                                    onClick={() => handleDelete(product.id)}
+                                >
+                                    Delete
+                                </button>
                             </div>
                         </div>
                     ))}
