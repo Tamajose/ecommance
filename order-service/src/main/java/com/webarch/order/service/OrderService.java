@@ -93,6 +93,7 @@ public class OrderService {
 					.order(saved)
 					.productId(snap.id())
 					.productName(snap.name())
+					.sellerUsername(snap.sellerUsername())
 					.unitPrice(snap.price())
 					.quantity(req.quantity())
 					.build());
@@ -125,6 +126,15 @@ public class OrderService {
 	@Transactional(readOnly = true)
 	public List<OrderResponse> getAll() {
 		return orderRepository.findAll().stream().map(this::toResponse).toList();
+	}
+
+	@Transactional(readOnly = true)
+	public List<OrderResponse> getForSeller(String sellerUsername) {
+		List<Long> orderIds = orderItemRepository.findBySellerUsername(sellerUsername).stream()
+				.map(item -> item.getOrder().getId())
+				.distinct()
+				.toList();
+		return orderRepository.findAllById(orderIds).stream().map(this::toResponse).toList();
 	}
 
 	@Transactional(readOnly = true)

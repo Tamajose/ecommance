@@ -32,6 +32,9 @@ public class OrderItem {
 	@Column(nullable = false)
 	private String productName;
 
+	@Column(nullable = false)
+	private String sellerUsername;
+
 	@Column(nullable = false, precision = 12, scale = 2)
 	private BigDecimal unitPrice;
 

@@ -40,7 +40,7 @@ public class ProductClient {
 		restTemplate.exchange(request, Void.class);
 	}
 
-	public record ProductSnapshot(Long id, String name, BigDecimal price, Integer stockQuantity) {
+	public record ProductSnapshot(Long id, String name, BigDecimal price, Integer stockQuantity, String sellerUsername) {
 	}
 
 	public record StockRequest(int delta) {

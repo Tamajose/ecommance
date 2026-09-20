@@ -25,6 +25,8 @@ public class SecurityConfig {
 						.permitAll()
 						.requestMatchers(org.springframework.http.HttpMethod.POST, "/api/orders").authenticated()
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders/me").authenticated()
+						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders/seller/me")
+						.hasAnyAuthority("SELLER", "ADMIN")
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders").hasAuthority("ADMIN")
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders/{id}").authenticated()
 						.requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/orders/{id}/status")
