@@ -2,6 +2,7 @@ package com.webarch.order.service;
 
 import com.webarch.order.client.PaymentClient;
 import com.webarch.order.client.ProductClient;
+import com.webarch.order.client.UserClient;
 import com.webarch.order.domain.Order;
 import com.webarch.order.domain.OrderItem;
 import com.webarch.order.domain.OrderStatus;
@@ -27,6 +28,7 @@ public class OrderService {
 	private final OrderItemRepository orderItemRepository;
 	private final ProductClient productClient;
 	private final PaymentClient paymentClient;
+	private final UserClient userClient;
 
 	private static final Map<OrderStatus, List<OrderStatus>> TRANSITIONS = Map.of(
 			OrderStatus.PENDING_PAYMENT, List.of(OrderStatus.PAID, OrderStatus.CANCELLED),
@@ -114,6 +116,11 @@ public class OrderService {
 		}
 		saved.setPaymentId(paymentId);
 		orderRepository.save(saved);
+
+		try {
+			userClient.syncProfileAddress(username, request.shippingAddress());
+		} catch (RestClientException ignored) {
+		}
 
 		return toResponse(saved);
 	}

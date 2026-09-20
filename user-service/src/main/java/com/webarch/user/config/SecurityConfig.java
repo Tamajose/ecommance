@@ -144,6 +144,7 @@ public class SecurityConfig {
 						.requestMatchers("/h2-console/**").permitAll()
 						.requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/users/me").authenticated()
+						.requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/users/profile-address").permitAll()
 						.requestMatchers("/api/users", "/api/users/**").hasAuthority("ADMIN")
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/reports").hasAuthority("ADMIN")
 						.requestMatchers(org.springframework.http.HttpMethod.POST, "/api/reports/*/resolve").hasAuthority("ADMIN")

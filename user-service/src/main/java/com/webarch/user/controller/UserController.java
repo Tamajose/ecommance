@@ -1,10 +1,12 @@
 package com.webarch.user.controller;
 
 import com.webarch.user.dto.AddressRequest;
+import com.webarch.user.dto.ProfileAddressSyncRequest;
 import com.webarch.user.dto.UserRequest;
 import com.webarch.user.dto.UserResponse;
 import com.webarch.user.service.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,6 +20,9 @@ import java.util.List;
 public class UserController {
 
 	private final UserService userService;
+
+	@Value("${internal.api-key}")
+	private String internalApiKey;
 
 	public UserController(UserService userService) {
 		this.userService = userService;
@@ -52,6 +57,16 @@ public class UserController {
 	public ResponseEntity<UserResponse> updateAddress(@PathVariable Long id,
 			@Valid @RequestBody AddressRequest request) {
 		return ResponseEntity.ok(userService.updateAddress(id, request));
+	}
+
+	@PatchMapping("/profile-address")
+	public ResponseEntity<Void> syncProfileAddress(@RequestHeader("X-Internal-Api-Key") String apiKey,
+			@Valid @RequestBody ProfileAddressSyncRequest request) {
+		if (!internalApiKey.equals(apiKey)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		userService.updateAddressByUsername(request.username(), request.address());
+		return ResponseEntity.noContent().build();
 	}
 
 	private String usernameOf(Jwt jwt) {

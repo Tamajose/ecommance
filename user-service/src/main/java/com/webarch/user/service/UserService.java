@@ -78,6 +78,17 @@ public class UserService implements UserDetailsService {
 		return toResponse(userRepository.save(user));
 	}
 
+	@Transactional
+	public void updateAddressByUsername(String username, AddressRequest request) {
+		userRepository.findByUsername(username).ifPresent(user -> {
+			user.setAddressLine(request.line());
+			user.setAddressCity(request.city());
+			user.setAddressPostalCode(request.postalCode());
+			user.setAddressCountry(request.country());
+			userRepository.save(user);
+		});
+	}
+
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userRepository.findByUsername(username)

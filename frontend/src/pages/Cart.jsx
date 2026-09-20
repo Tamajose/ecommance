@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { checkout } from "../api/cartApi";
 import { getProducts } from "../api/productApi";
+import { getCurrentUser } from "../api/userApi";
 
 const PAYMENT_METHODS = [
     { value: "CASH_ON_DELIVERY", label: "Cash on delivery" },
@@ -40,6 +41,26 @@ export default function Cart() {
             }
         }
         loadImages();
+    }, []);
+
+    useEffect(() => {
+        async function loadProfileAddress() {
+            try {
+                const profile = await getCurrentUser();
+                if (profile.name) {
+                    setRecipientName(prev => prev || profile.name);
+                }
+                if (profile.addressLine) {
+                    setLine(prev => prev || profile.addressLine);
+                    setCity(prev => prev || profile.addressCity || "");
+                    setPostalCode(prev => prev || profile.addressPostalCode || "");
+                    setCountry(prev => prev || profile.addressCountry || "");
+                }
+            } catch (err) {
+                console.error("Failed to load saved profile address:", err);
+            }
+        }
+        loadProfileAddress();
     }, []);
 
     const handleCheckout = async (e) => {
