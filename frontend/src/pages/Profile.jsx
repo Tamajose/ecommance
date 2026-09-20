@@ -100,7 +100,7 @@ export default function Profile() {
                                 <Field label="Country" value={profile.addressCountry} />
                             </div>
                         ) : (
-                            <p className="profile-empty">No address saved yet — your address is used at checkout.</p>
+                            <p className="profile-empty">No address saved yet.</p>
                         )}
                     </>
                 ) : null}
