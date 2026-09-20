@@ -13,9 +13,15 @@ export default function Navbar(){
             </div>
 
             <div className="navbar-links">
-                <Link to="/products">Products</Link>
-                {user && <Link to="/orders">My Orders</Link>}
-                {(isSeller || isAdmin) && <Link to="/my-products">My Products</Link>}
+                {isAdmin ? (
+                    <Link to="/admin">Admin Dashboard</Link>
+                ) : (
+                    <>
+                        <Link to="/products">Products</Link>
+                        {user && <Link to="/orders">My Orders</Link>}
+                        {isSeller && <Link to="/my-products">My Products</Link>}
+                    </>
+                )}
             </div>
 
             <div className="navbar-right">

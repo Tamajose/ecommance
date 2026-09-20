@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { getProductById } from "../api/productApi";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import ReportModal from "../components/ReportModal";
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -15,6 +16,7 @@ export default function ProductDetail() {
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);
     const [actionMessage, setActionMessage] = useState(null);
+    const [reportTarget, setReportTarget] = useState(null);
 
     const loadProduct = useCallback(async () => {
         try {
@@ -41,9 +43,15 @@ export default function ProductDetail() {
             try {
                 setActionMessage(null);
                 await addItem(product.id, quantity);
-                setActionMessage({ type: "success", text: "Added to cart successfully!" });
+                setActionMessage({
+                    type: "success",
+                    text: "Added to cart successfully!",
+                });
             } catch (err) {
-                setActionMessage({ type: "error", text: err.message || "Failed to add to cart" });
+                setActionMessage({
+                    type: "error",
+                    text: err.message || "Failed to add to cart",
+                });
             }
         }
     };
@@ -64,8 +72,46 @@ export default function ProductDetail() {
             <div className="product-info">
                 <h2>{product.name}</h2>
                 <p className="category">{product.category}</p>
-                <p className="description">{product.description}</p>
+                <p className="seller-line">
+                    Sold by <strong>{product.sellerUsername}</strong>
+                </p>
+
+                {isAuthenticated && (
+                    <div className="report-links">
+                        <button
+                            type="button"
+                            className="link-button"
+                            onClick={() => setReportTarget({
+                                targetType: "LISTING",
+                                targetId: product.id,
+                                targetLabel: product.name,
+                            })}
+                        >
+                            Report this listing
+                        </button>
+                        <button
+                            type="button"
+                            className="link-button"
+                            onClick={() => setReportTarget({
+                                targetType: "USER",
+                                targetId: product.sellerUsername,
+                                targetLabel: product.sellerUsername,
+                            })}
+                        >
+                            Report seller
+                        </button>
+                    </div>
+                )}
             </div>
+
+            {reportTarget && (
+                <ReportModal
+                    targetType={reportTarget.targetType}
+                    targetId={reportTarget.targetId}
+                    targetLabel={reportTarget.targetLabel}
+                    onClose={() => setReportTarget(null)}
+                />
+            )}
 
             <div className="buy-box">
                 <p className="price">BDT{Number(product.price).toFixed(2)}</p>
@@ -73,7 +119,9 @@ export default function ProductDetail() {
                     {product.stockQuantity > 0 ? (
                         <span className="stock-badge available">Available</span>
                     ) : (
-                        <span className="stock-badge unavailable">Not Available</span>
+                        <span className="stock-badge unavailable">
+                            Not Available
+                        </span>
                     )}
                 </div>
                 <input
@@ -83,11 +131,21 @@ export default function ProductDetail() {
                     value={quantity}
                     onChange={(e) => setQuantity(Number(e.target.value))}
                 />
-                <button className="button" onClick={handleAddToCart} disabled={product.stockQuantity === 0}>
+                <button
+                    className="button"
+                    onClick={handleAddToCart}
+                    disabled={product.stockQuantity === 0}
+                >
                     Add to Cart
                 </button>
                 {actionMessage && (
-                    <p className={actionMessage.type === "success" ? "success" : "error"}>
+                    <p
+                        className={
+                            actionMessage.type === "success"
+                                ? "success"
+                                : "error"
+                        }
+                    >
                         {actionMessage.text}
                     </p>
                 )}
