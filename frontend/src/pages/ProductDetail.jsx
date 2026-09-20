@@ -69,9 +69,13 @@ export default function ProductDetail() {
 
             <div className="buy-box">
                 <p className="price">BDT{Number(product.price).toFixed(2)}</p>
-                <p className="in-stock">
-                    {product.stockQuantity > 0 ? `${product.stockQuantity} in stock` : "Out of stock"}
-                </p>
+                <div className="product-stock-status">
+                    {product.stockQuantity > 0 ? (
+                        <span className="stock-badge available">Available</span>
+                    ) : (
+                        <span className="stock-badge unavailable">Not Available</span>
+                    )}
+                </div>
                 <input
                     type="number"
                     min="1"

@@ -28,9 +28,13 @@ export default function ProductCard({ product }){
                     BDT{Number(product.price).toFixed(2)}
                 </p>
 
-                <p>
-                    Available Stock: {product.stockQuantity}
-                </p>
+                <div className="product-stock-status">
+                    {product.stockQuantity > 0 ? (
+                        <span className="stock-badge available">Available</span>
+                    ) : (
+                        <span className="stock-badge unavailable">Not Available</span>
+                    )}
+                </div>
 
                 <Link className="button" to={`/product/${product.id}`}>
                     View Product

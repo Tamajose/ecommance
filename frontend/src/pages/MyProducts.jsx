@@ -52,7 +52,14 @@ export default function MyProducts() {
                         <div key={product.id} className="my-product-card">
                             <div className="my-product-info">
                                 <h4>{product.name}</h4>
-                                <p>{product.category} &middot; BDT{Number(product.price).toFixed(2)} &middot; Stock: {product.stockQuantity}</p>
+                                <p>
+                                    {product.category} &middot; BDT{Number(product.price).toFixed(2)} &middot;{" "}
+                                    {product.stockQuantity > 0 ? (
+                                        <span className="stock-badge available">Available</span>
+                                    ) : (
+                                        <span className="stock-badge unavailable">Not Available</span>
+                                    )}
+                                </p>
                             </div>
                             <div className="my-product-actions">
                                 <Link to={`/my-products/${product.id}/edit`}>Edit</Link>
