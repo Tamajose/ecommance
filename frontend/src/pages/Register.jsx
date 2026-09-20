@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { register } from "../api/authApi";
+import GoogleButton from "../components/GoogleButton";
 
 export default function Register() {
     const [username, setUsername] = useState("");
@@ -24,7 +25,7 @@ export default function Register() {
 
     return (
         <div className="auth-container">
-            <h2>Register</h2>
+            <h2>Create your account</h2>
             {error && <p className="error">{error}</p>}
             <form onSubmit={handleSubmit}>
                 <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
@@ -37,6 +38,10 @@ export default function Register() {
                 </select>
                 <button type="submit">Register</button>
             </form>
+
+            <div className="auth-divider">or</div>
+            <GoogleButton onError={setError} />
+
             <p>Already have an account? <Link to="/login">Login here</Link></p>
         </div>
     );

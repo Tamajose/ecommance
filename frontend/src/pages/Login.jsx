@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import GoogleButton from "../components/GoogleButton";
 
 export default function Login() {
     const [username, setUsername] = useState("");
@@ -27,13 +28,19 @@ export default function Login() {
 
     return (
         <div className="auth-container">
-            <h2>Login</h2>
+            <h2>Welcome back!</h2>
             {error && <p className="error">{error}</p>}
             <form onSubmit={handleSubmit}>
+                <label htmlFor="login-username">Username</label>
                 <input type="text" placeholder="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+                <label htmlFor="login-password">Password</label>
                 <input type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} required />
                 <button type="submit">Login</button>
             </form>
+
+            <div className="auth-divider">or</div>
+            <GoogleButton onError={setError} />
+
             <p>Don't have an account? <Link to="/register">Register here</Link></p>
         </div>
     );
