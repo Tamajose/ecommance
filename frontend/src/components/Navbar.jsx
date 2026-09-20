@@ -37,6 +37,10 @@ export default function Navbar(){
                 )}
             </div>
 
+            <div className="navbar-search">
+                <input type="text" placeholder="Search products..." />
+            </div>
+
             <div className="navbar-right">
                 {user && (
                     <Link to="/cart" className="cart-link">

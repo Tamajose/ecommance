@@ -121,7 +121,40 @@ h3 {
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.navbar-search {
+    display: flex;
+    justify-content: center;
     flex: 1;
+    padding: 0 20px;
+}
+
+.navbar-search input {
+    width: 100%;
+    max-width: 420px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: inherit;
+    outline: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: #ffffff;
+    transition: background var(--transition);
+}
+
+.navbar-search input::placeholder {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.navbar-search input:focus {
+    background: #ffffff;
+    color: var(--text-main);
+}
+
+.navbar-search input:focus::placeholder {
+    color: var(--text-muted);
 }
 
 .navbar-links a {
