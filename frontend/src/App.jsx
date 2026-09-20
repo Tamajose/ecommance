@@ -15,6 +15,7 @@ import SellerOrders from "./pages/SellerOrders";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import GoogleCallback from "./pages/GoogleCallback";
+import Profile from "./pages/Profile";
 import "./App.css";
 
 function App() {
@@ -29,6 +30,14 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/login/callback" element={<GoogleCallback />} />
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/products" element={<Products />} />
               <Route path="/product/:id" element={<ProductDetail />} />
               <Route
