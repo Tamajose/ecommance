@@ -32,7 +32,7 @@ public class GatewayRoutesConfig {
     @Bean
     public RouterFunction<ServerResponse> userServiceRoute() {
         return route("user_service")
-                .route(req -> req.path().startsWith("/api/auth") || req.path().startsWith("/api/users") || req.path().startsWith("/api/reports") || req.path().startsWith("/.well-known"), http())
+                .route(req -> req.path().startsWith("/api/auth") || req.path().startsWith("/api/users") || req.path().startsWith("/api/reports") || req.path().startsWith("/.well-known") || req.path().startsWith("/oauth2") || req.path().startsWith("/login/oauth2"), http())
                 .before(uri(userServiceUrl))
                 .build();
     }

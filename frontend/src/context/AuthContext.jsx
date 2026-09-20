@@ -3,7 +3,6 @@ import { login as loginAPI, GOOGLE_POPUP_NAME, googleLoginUrl } from "../api/aut
 
 const authContext = createContext(null);
 
-const POPUP_FEATURES = "width=480,height=640,left=0,top=0,resizable=yes,scrollbars=yes";
 const GOOGLE_MESSAGE_TYPE = "ecommance:google-login";
 
 export function AuthProvider({ children }){
@@ -79,7 +78,13 @@ export function AuthProvider({ children }){
 
     function loginWithGoogle(){
         return new Promise((resolve, reject) => {
-            const popup = window.open(googleLoginUrl, GOOGLE_POPUP_NAME, POPUP_FEATURES);
+            const width = 480;
+            const height = 640;
+            const left = Math.round((window.screen.width) / 3);
+            const top = Math.round((window.screen.height) / 3);
+
+            const popupFeatures = `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`;
+            const popup = window.open(googleLoginUrl, GOOGLE_POPUP_NAME, popupFeatures);
 
             if(!popup){
                 reject(new Error("Your browser blocked the Google window. Allow popups for this site and try again."));
