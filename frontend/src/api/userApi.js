@@ -7,3 +7,10 @@ export async function getAllUsers(){
 export async function getCurrentUser(){
     return request(API_URLS.user, "/api/users/me");
 }
+
+export async function updateMyProfile(data){
+    return request(API_URLS.user, "/api/users/me", {
+        method: "PATCH",
+        body: JSON.stringify(data)
+    });
+}

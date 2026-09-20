@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getCurrentUser } from "../api/userApi";
+import { getCurrentUser, updateMyProfile } from "../api/userApi";
 import { useAuth } from "../context/AuthContext";
 
 function formatDate(value){
@@ -20,40 +20,74 @@ function Field({ label, value }){
     );
 }
 
+const emptyForm = {
+    name: "",
+    phone: "",
+    addressLine: "",
+    addressCity: "",
+    addressPostalCode: "",
+    addressCountry: "",
+};
+
 export default function Profile() {
     const { user } = useAuth();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    useEffect(() => {
-        let cancelled = false;
+    const [isEditing, setIsEditing] = useState(false);
+    const [form, setForm] = useState(emptyForm);
+    const [saving, setSaving] = useState(false);
+    const [saveError, setSaveError] = useState(null);
 
-        async function load(){
-            setLoading(true);
-            setError(null);
-            try{
-                const data = await getCurrentUser();
-                if(!cancelled){
-                    setProfile(data);
-                }
-            } catch(err){
-                if(!cancelled){
-                    setError(err.message || "Failed to load your details");
-                }
-            } finally{
-                if(!cancelled){
-                    setLoading(false);
-                }
-            }
+    async function load(){
+        setLoading(true);
+        setError(null);
+        try{
+            const data = await getCurrentUser();
+            setProfile(data);
+        } catch(err){
+            setError(err.message || "Failed to load your details");
+        } finally{
+            setLoading(false);
         }
+    }
 
+    useEffect(() => {
         load();
-
-        return () => {
-            cancelled = true;
-        };
     }, []);
+
+    const startEditing = () => {
+        setForm({
+            name: profile?.name || "",
+            phone: profile?.phone || "",
+            addressLine: profile?.addressLine || "",
+            addressCity: profile?.addressCity || "",
+            addressPostalCode: profile?.addressPostalCode || "",
+            addressCountry: profile?.addressCountry || "",
+        });
+        setSaveError(null);
+        setIsEditing(true);
+    };
+
+    const handleChange = (field) => (e) => {
+        setForm(prev => ({ ...prev, [field]: e.target.value }));
+    };
+
+    const handleSave = async (e) => {
+        e.preventDefault();
+        setSaving(true);
+        setSaveError(null);
+        try {
+            const updated = await updateMyProfile(form);
+            setProfile(updated);
+            setIsEditing(false);
+        } catch (err) {
+            setSaveError(err.message || "Failed to update profile");
+        } finally {
+            setSaving(false);
+        }
+    };
 
     const displayName = profile?.name || user?.username || "My profile";
     const initials = displayName.trim().charAt(0).toUpperCase();
@@ -78,7 +112,7 @@ export default function Profile() {
 
                 {loading ? (
                     <div className="loading">Loading your details…</div>
-                ) : profile ? (
+                ) : profile && !isEditing ? (
                     <>
                         <h3 className="profile-section-title">Account</h3>
                         <div className="profile-grid">
@@ -102,14 +136,62 @@ export default function Profile() {
                         ) : (
                             <p className="profile-empty">No address saved yet.</p>
                         )}
-                    </>
-                ) : null}
 
-                <div className="profile-actions">
-                    <Link to="/">Back to shop</Link>
-                    {canSell && <Link to="/my-products">My products</Link>}
-                    {profile?.role === "ADMIN" && <Link to="/admin">Admin dashboard</Link>}
-                </div>
+                        <div className="profile-actions">
+                            <button type="button" className="button" onClick={startEditing}>
+                                Edit Profile
+                            </button>
+                            <Link to="/">Back to shop</Link>
+                            {canSell && <Link to="/my-products">My products</Link>}
+                            {profile?.role === "ADMIN" && <Link to="/admin">Admin dashboard</Link>}
+                        </div>
+                    </>
+                ) : profile && isEditing ? (
+                    <div className="checkout-form">
+                        {saveError && <p className="error">{saveError}</p>}
+                        <h3>Account</h3>
+                        <form onSubmit={handleSave}>
+                            <div className="form-group full-width">
+                                <label>Full Name</label>
+                                <input type="text" value={form.name} onChange={handleChange("name")} required />
+                            </div>
+                            <div className="form-group full-width">
+                                <label>Phone</label>
+                                <input type="text" value={form.phone} onChange={handleChange("phone")} />
+                            </div>
+                            <div className="form-group full-width">
+                                <label>Street Address</label>
+                                <input type="text" value={form.addressLine} onChange={handleChange("addressLine")} />
+                            </div>
+                            <div className="form-group">
+                                <label>City</label>
+                                <input type="text" value={form.addressCity} onChange={handleChange("addressCity")} />
+                            </div>
+                            <div className="form-group">
+                                <label>Postal Code</label>
+                                <input type="text" value={form.addressPostalCode} onChange={handleChange("addressPostalCode")} />
+                            </div>
+                            <div className="form-group">
+                                <label>Country</label>
+                                <input type="text" value={form.addressCountry} onChange={handleChange("addressCountry")} />
+                            </div>
+
+                            <div className="form-actions full-width profile-actions">
+                                <button type="submit" className="button" disabled={saving}>
+                                    {saving ? "Saving..." : "Save Changes"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="button-secondary"
+                                    onClick={() => setIsEditing(false)}
+                                    disabled={saving}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                ) : null}
             </div>
         </div>
     );

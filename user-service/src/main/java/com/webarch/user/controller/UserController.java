@@ -2,6 +2,7 @@ package com.webarch.user.controller;
 
 import com.webarch.user.dto.AddressRequest;
 import com.webarch.user.dto.ProfileAddressSyncRequest;
+import com.webarch.user.dto.ProfileUpdateRequest;
 import com.webarch.user.dto.UserRequest;
 import com.webarch.user.dto.UserResponse;
 import com.webarch.user.service.UserService;
@@ -46,6 +47,12 @@ public class UserController {
 	@GetMapping("/me")
 	public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
 		return ResponseEntity.ok(userService.getByUsername(usernameOf(jwt)));
+	}
+
+	@PatchMapping("/me")
+	public ResponseEntity<UserResponse> updateMyProfile(@AuthenticationPrincipal Jwt jwt,
+			@Valid @RequestBody ProfileUpdateRequest request) {
+		return ResponseEntity.ok(userService.updateProfile(usernameOf(jwt), request));
 	}
 
 	@GetMapping("/{id}")

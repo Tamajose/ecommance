@@ -3,6 +3,7 @@ package com.webarch.user.service;
 import com.webarch.user.domain.Role;
 import com.webarch.user.domain.User;
 import com.webarch.user.dto.AddressRequest;
+import com.webarch.user.dto.ProfileUpdateRequest;
 import com.webarch.user.dto.UserRequest;
 import com.webarch.user.dto.UserResponse;
 import com.webarch.user.repository.UserRepository;
@@ -75,6 +76,19 @@ public class UserService implements UserDetailsService {
 		user.setAddressCity(request.city());
 		user.setAddressPostalCode(request.postalCode());
 		user.setAddressCountry(request.country());
+		return toResponse(userRepository.save(user));
+	}
+
+	@Transactional
+	public UserResponse updateProfile(String username, ProfileUpdateRequest request) {
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
+		user.setName(request.name());
+		user.setPhone(request.phone());
+		user.setAddressLine(request.addressLine());
+		user.setAddressCity(request.addressCity());
+		user.setAddressPostalCode(request.addressPostalCode());
+		user.setAddressCountry(request.addressCountry());
 		return toResponse(userRepository.save(user));
 	}
 
