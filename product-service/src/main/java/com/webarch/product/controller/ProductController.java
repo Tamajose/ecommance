@@ -100,4 +100,15 @@ public class ProductController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @DeleteMapping("/{id}/moderate")
+    public ResponseEntity<Void> moderateDeleteProduct(@PathVariable Long id,
+            @RequestHeader("X-Internal-Api-Key") String apiKey){
+        if (!internalApiKey.equals(apiKey)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        productService.deleteProduct(id, null, true);
+
+        return ResponseEntity.noContent().build();
+    }
 }

@@ -3,9 +3,11 @@ package com.webarch.order.controller;
 import com.webarch.order.dto.OrderRequest;
 import com.webarch.order.dto.OrderResponse;
 import com.webarch.order.dto.OrderStatusUpdateRequest;
+import com.webarch.order.dto.PaymentStatusSyncRequest;
 import com.webarch.order.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,6 +22,9 @@ import java.util.List;
 public class OrderController {
 
 	private final OrderService orderService;
+
+	@Value("${internal.api-key}")
+	private String internalApiKey;
 
 	private String usernameOf(Jwt jwt) {
 		return jwt.getSubject();
@@ -55,6 +60,17 @@ public class OrderController {
 	public ResponseEntity<OrderResponse> updateStatus(@PathVariable Long id,
 			@Valid @RequestBody OrderStatusUpdateRequest request) {
 		return ResponseEntity.ok(orderService.updateStatus(id, request));
+	}
+
+	@PostMapping("/{id}/sync-payment-status")
+	public ResponseEntity<Void> syncPaymentStatus(@PathVariable Long id,
+			@RequestHeader("X-Internal-Api-Key") String apiKey,
+			@RequestBody PaymentStatusSyncRequest request) {
+		if (!internalApiKey.equals(apiKey)) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		orderService.syncFromPaymentStatus(id, request.paymentStatus());
+		return ResponseEntity.noContent().build();
 	}
 
 	@PostMapping("/{id}/cancel")

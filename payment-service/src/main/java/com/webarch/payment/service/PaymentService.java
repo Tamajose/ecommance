@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 
+import com.webarch.payment.client.OrderClient;
 import com.webarch.payment.domain.Payment;
 import com.webarch.payment.domain.PaymentStatus;
 import com.webarch.payment.dto.PaymentRequest;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PaymentService {
     private final PaymentRepository paymentRepository;
+    private final OrderClient orderClient;
 
     private static final Map<PaymentStatus, List<PaymentStatus>> TRANSITIONS = Map.of(
             PaymentStatus.PENDING, List.of(PaymentStatus.COMPLETED, PaymentStatus.FAILED),
@@ -77,7 +80,15 @@ public class PaymentService {
                     "Invalid payment status transition: " + payment.getPaymentStatus() + " -> " + target);
         }
         payment.setPaymentStatus(target);
-        return paymentRepository.save(payment);
+        Payment saved = paymentRepository.save(payment);
+
+        try {
+            orderClient.syncOrderStatus(saved.getOrderId(), target.name());
+        } catch (RestClientException ignored) {
+            // order-service being unreachable shouldn't block the payment status change itself
+        }
+
+        return saved;
     }
 
     @Transactional(readOnly = true)

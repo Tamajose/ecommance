@@ -155,6 +155,35 @@ public class OrderService {
 	}
 
 	@Transactional
+	public void syncFromPaymentStatus(Long orderId, String paymentStatus) {
+		Order order = orderRepository.findById(orderId).orElse(null);
+		if (order == null) {
+			return;
+		}
+
+		OrderStatus target = switch (paymentStatus) {
+			case "COMPLETED" -> OrderStatus.PAID;
+			case "FAILED", "REFUNDED" -> OrderStatus.CANCELLED;
+			default -> null;
+		};
+		if (target == null || !TRANSITIONS.getOrDefault(order.getStatus(), List.of()).contains(target)) {
+			return;
+		}
+
+		if (target == OrderStatus.CANCELLED) {
+			for (OrderItem item : orderItemRepository.findByOrderId(order.getId())) {
+				try {
+					productClient.adjustStock(item.getProductId(), item.getQuantity());
+				} catch (RestClientException ignored) {
+				}
+			}
+		}
+
+		order.setStatus(target);
+		orderRepository.save(order);
+	}
+
+	@Transactional
 	public OrderResponse cancel(Long id, String username, boolean isAdmin) {
 		Order order = orderRepository.findById(id)
 				.orElseThrow(() -> new IllegalArgumentException("Order not found: " + id));

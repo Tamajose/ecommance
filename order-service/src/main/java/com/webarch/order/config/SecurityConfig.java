@@ -29,6 +29,8 @@ public class SecurityConfig {
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/orders/{id}").authenticated()
 						.requestMatchers(org.springframework.http.HttpMethod.PATCH, "/api/orders/{id}/status")
 						.hasAuthority("ADMIN")
+						.requestMatchers(org.springframework.http.HttpMethod.POST, "/api/orders/*/sync-payment-status")
+						.permitAll()
 						.requestMatchers(org.springframework.http.HttpMethod.POST, "/api/orders/{id}/cancel").authenticated()
 						.anyRequest().authenticated()
 				)

@@ -31,6 +31,7 @@ public class SecurityConfig {
 						.requestMatchers(HttpMethod.GET, "/api/products/my").hasAnyAuthority("ADMIN", "SELLER")
 						.requestMatchers(HttpMethod.GET, "/api/products/**").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/products/*/stock").permitAll()
+						.requestMatchers(HttpMethod.DELETE, "/api/products/*/moderate").permitAll()
 						.requestMatchers(HttpMethod.POST, "/api/products").hasAnyAuthority("ADMIN", "SELLER")
 						.requestMatchers(HttpMethod.PATCH, "/api/products/**").hasAnyAuthority("ADMIN", "SELLER")
 						.requestMatchers(HttpMethod.DELETE, "/api/products/**").hasAnyAuthority("ADMIN", "SELLER")
