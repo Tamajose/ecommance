@@ -143,6 +143,7 @@ public class SecurityConfig {
 						.requestMatchers("/.well-known/jwks.json").permitAll()
 						.requestMatchers("/h2-console/**").permitAll()
 						.requestMatchers("/actuator/**", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/users/me").authenticated()
 						.requestMatchers("/api/users", "/api/users/**").hasAuthority("ADMIN")
 						.requestMatchers(org.springframework.http.HttpMethod.GET, "/api/reports").hasAuthority("ADMIN")
 						.requestMatchers(org.springframework.http.HttpMethod.POST, "/api/reports/*/resolve").hasAuthority("ADMIN")
