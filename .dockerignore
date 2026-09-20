@@ -1,0 +1,12 @@
+**/target/
+**/node_modules/
+**/dist/
+.git/
+.github/
+.idea/
+.vscode/
+.kilo/
+.claude/
+.secrets/
+.env
+*.md
