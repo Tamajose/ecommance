@@ -60,6 +60,13 @@ public class UserService implements UserDetailsService {
 				.orElseThrow(() -> new IllegalArgumentException("User not found: " + id));
 	}
 
+	@Transactional(readOnly = true)
+	public UserResponse getByUsername(String username) {
+		return userRepository.findByUsername(username)
+				.map(this::toResponse)
+				.orElseThrow(() -> new IllegalArgumentException("User not found: " + username));
+	}
+
 	@Transactional
 	public UserResponse updateAddress(Long id, AddressRequest request) {
 		User user = userRepository.findById(id)

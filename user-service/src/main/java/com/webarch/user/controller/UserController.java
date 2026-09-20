@@ -7,6 +7,8 @@ import com.webarch.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,6 +38,11 @@ public class UserController {
 		return ResponseEntity.ok(userService.getAllUsers());
 	}
 
+	@GetMapping("/me")
+	public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+		return ResponseEntity.ok(userService.getByUsername(usernameOf(jwt)));
+	}
+
 	@GetMapping("/{id}")
 	public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
 		return ResponseEntity.ok(userService.getUserById(id));
@@ -45,5 +52,9 @@ public class UserController {
 	public ResponseEntity<UserResponse> updateAddress(@PathVariable Long id,
 			@Valid @RequestBody AddressRequest request) {
 		return ResponseEntity.ok(userService.updateAddress(id, request));
+	}
+
+	private String usernameOf(Jwt jwt) {
+		return jwt.getSubject();
 	}
 }

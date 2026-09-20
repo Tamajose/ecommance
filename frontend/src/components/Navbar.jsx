@@ -47,9 +47,10 @@ export default function Navbar(){
 
                 {user ? (
                     <>
-                        <span className="username">
+                        <Link to="/profile" className="username" title="View my profile">
+                            <span className="navbar-avatar">{user.username.charAt(0).toUpperCase()}</span>
                             {user.username}
-                        </span>
+                        </Link>
 
                         <button onClick={handleLogout}>
                             Logout
