@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
@@ -7,15 +7,19 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
-    const location = useLocation();
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
         try {
-            await login(username, password);
-            navigate(location.state?.from?.pathname || "/");
+            const response = await login(username, password);
+            const roleTokens = response.role ? response.role.split(" ") : [];
+            const isAdmin = roleTokens.includes("ADMIN");
+            const isSeller = roleTokens.includes("SELLER");
+            const defaultTarget = isAdmin ? "/admin" : isSeller ? "/my-products" : "/";
+
+            navigate(defaultTarget);
         } catch (err) {
             setError(err.message || "Failed to login");
         }
