@@ -1,6 +1,20 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { deleteProduct } from "../api/productApi";
 
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onDeleted }) {
+    const { isAdmin } = useAuth();
+
+    const handleDelete = async () => {
+        if (!window.confirm(`Delete "${product.name}"?`)) return;
+        try {
+            await deleteProduct(product.id);
+            onDeleted?.(product.id);
+        } catch (err) {
+            alert(err.message || "Failed to delete product");
+        }
+    };
+
     return (
         <div className="product-card">
             <div className="product-image">
@@ -32,9 +46,16 @@ export default function ProductCard({ product }) {
                     )}
                 </div>
 
-                <Link className="button" to={`/product/${product.id}`}>
-                    View Product
-                </Link>
+                <div className="product-card-actions">
+                    <Link className="button" to={`/product/${product.id}`}>
+                        View Product
+                    </Link>
+                    {isAdmin && (
+                        <button type="button" className="button-danger" onClick={handleDelete}>
+                            Delete
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     );

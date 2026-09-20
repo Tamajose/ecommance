@@ -15,6 +15,10 @@ export async function getAllOrders(){
     return request(API_URLS.order, "/api/orders");
 }
 
+export async function getSellerOrders(){
+    return request(API_URLS.order, "/api/orders/seller/me");
+}
+
 export async function getOrderById(id){
     return request(API_URLS.order, `/api/orders/${id}`);
 }

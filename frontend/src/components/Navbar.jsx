@@ -14,12 +14,19 @@ export default function Navbar(){
 
             <div className="navbar-links">
                 {isAdmin ? (
-                    <Link to="/admin">Admin Dashboard</Link>
+                    <>
+                        <Link to="/products">Products</Link>
+                        <Link to="/admin">Admin Dashboard</Link>
+                    </>
+                ) : isSeller ? (
+                    <>
+                        <Link to="/my-products">My Products</Link>
+                        <Link to="/outgoing-orders">Outgoing Orders</Link>
+                    </>
                 ) : (
                     <>
                         <Link to="/products">Products</Link>
                         {user && <Link to="/orders">My Orders</Link>}
-                        {isSeller && <Link to="/my-products">My Products</Link>}
                     </>
                 )}
             </div>

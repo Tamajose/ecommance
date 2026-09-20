@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
-import { getProductById } from "../api/productApi";
+import { getProductById, deleteProduct } from "../api/productApi";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import ReportModal from "../components/ReportModal";
@@ -9,7 +9,7 @@ export default function ProductDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isAdmin } = useAuth();
     const { addItem } = useCart();
 
     const [product, setProduct] = useState(null);
@@ -53,6 +53,16 @@ export default function ProductDetail() {
                     text: err.message || "Failed to add to cart",
                 });
             }
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!window.confirm(`Delete "${product.name}"?`)) return;
+        try {
+            await deleteProduct(product.id);
+            navigate("/products");
+        } catch (err) {
+            alert(err.message || "Failed to delete product");
         }
     };
 
@@ -124,20 +134,28 @@ export default function ProductDetail() {
                         </span>
                     )}
                 </div>
-                <input
-                    type="number"
-                    min="1"
-                    max={product.stockQuantity}
-                    value={quantity}
-                    onChange={(e) => setQuantity(Number(e.target.value))}
-                />
-                <button
-                    className="button"
-                    onClick={handleAddToCart}
-                    disabled={product.stockQuantity === 0}
-                >
-                    Add to Cart
-                </button>
+                {isAdmin ? (
+                    <button className="button-danger" onClick={handleDelete}>
+                        Delete Product
+                    </button>
+                ) : (
+                    <>
+                        <input
+                            type="number"
+                            min="1"
+                            max={product.stockQuantity}
+                            value={quantity}
+                            onChange={(e) => setQuantity(Number(e.target.value))}
+                        />
+                        <button
+                            className="button"
+                            onClick={handleAddToCart}
+                            disabled={product.stockQuantity === 0}
+                        >
+                            Add to Cart
+                        </button>
+                    </>
+                )}
                 {actionMessage && (
                     <p
                         className={

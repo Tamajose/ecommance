@@ -11,6 +11,7 @@ import Orders from "./pages/Orders";
 import MyProducts from "./pages/MyProducts";
 import ProductForm from "./pages/ProductForm";
 import AdminDashboard from "./pages/AdminDashboard";
+import SellerOrders from "./pages/SellerOrders";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import "./App.css";
@@ -65,6 +66,14 @@ function App() {
                 element={
                   <ProtectedRoute roles={["SELLER", "ADMIN"]}>
                     <ProductForm />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/outgoing-orders"
+                element={
+                  <ProtectedRoute roles={["SELLER", "ADMIN"]}>
+                    <SellerOrders />
                   </ProtectedRoute>
                 }
               />

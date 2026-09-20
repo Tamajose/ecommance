@@ -28,7 +28,11 @@ export default function Products() {
             <h2>All Products</h2>
             <div className="products-grid">
                 {products.map(product => (
-                    <ProductCard key={product.id} product={product} />
+                    <ProductCard
+                        key={product.id}
+                        product={product}
+                        onDeleted={(id) => setProducts(prev => prev.filter(p => p.id !== id))}
+                    />
                 ))}
             </div>
         </div>
