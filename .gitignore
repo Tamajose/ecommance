@@ -24,3 +24,6 @@ target/
 Thumbs.db
 .kilo/
 node_modules/
+
+.env
+frontend/.env*
